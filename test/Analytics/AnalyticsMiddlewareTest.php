@@ -78,14 +78,13 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
                 [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
-                [':identity_role', 'foo'],
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
@@ -100,14 +99,13 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
                 ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
-                ['`identity_role`', ':identity_role'],
                 ['`ip`', ':ip'],
                 ['`user_agent`', ':user_agent'],
                 ['`requested_on`', ':requested_on'],
@@ -199,14 +197,13 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
                 [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
-                [':identity_role', 'foo'],
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
@@ -221,14 +218,13 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
                 ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
-                ['`identity_role`', ':identity_role'],
                 ['`ip`', ':ip'],
                 ['`user_agent`', ':user_agent'],
                 ['`requested_on`', ':requested_on'],
@@ -335,14 +331,13 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
                 [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
-                [':identity_role', null],
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
@@ -357,14 +352,13 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
                 ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
-                ['`identity_role`', ':identity_role'],
                 ['`ip`', ':ip'],
                 ['`user_agent`', ':user_agent'],
                 ['`requested_on`', ':requested_on'],
@@ -475,14 +469,13 @@ final class AnalyticsMiddlewareTest extends TestCase
         $e = new Exception('Fiz biz');
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
                 [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
-                [':identity_role', null],
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
@@ -497,14 +490,13 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(11))
+            ->expects(self::exactly(10))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
                 ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
-                ['`identity_role`', ':identity_role'],
                 ['`ip`', ':ip'],
                 ['`user_agent`', ':user_agent'],
                 ['`requested_on`', ':requested_on'],

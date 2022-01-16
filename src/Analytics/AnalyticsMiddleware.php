@@ -67,7 +67,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             'action' => $this->getAction($request),
 
             'identity' => $this->getIdentityFromRequest($request),
-            'identity_role' => $this->getIdentityRoleFromRequest($request),
 
             'ip' => $this->getIpFromRequest($request),
             'user_agent' => $this->getUserAgentFromRequest($request),
@@ -122,17 +121,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         assert($identity === null || is_string($identity));
 
         return $identity;
-    }
-
-    private function getIdentityRoleFromRequest(ServerRequestInterface $request): ?string
-    {
-        $claims = $request->getAttribute('claims');
-
-        if (is_array($claims) && isset($claims['rol']) && is_string($claims['rol'])) {
-            return $claims['rol'];
-        }
-
-        return null;
     }
 
     private function getStartTimeFromRequest(ServerRequestInterface $request): float
