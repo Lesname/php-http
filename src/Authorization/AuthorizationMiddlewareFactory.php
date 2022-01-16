@@ -10,11 +10,11 @@ final class AuthorizationMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): AuthorizationMiddleware
     {
-        $config = $container->get('config');
-        assert(is_array($config));
-
         $responseFactory = $container->get(ResponseFactoryInterface::class);
         assert($responseFactory instanceof ResponseFactoryInterface);
+
+        $config = $container->get('config');
+        assert(is_array($config));
 
         assert(is_array($config['routes']));
         $routes = $config['routes'];
