@@ -91,7 +91,7 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [':duration', new Callback(function ($value) use ($startTime) {
                     $diff = (int)floor((microtime(true) - $startTime) * 1000);
 
-                    return $diff - $value <= 1;
+                    return $diff - $value <= 2;
                 })],
                 [':response', 200],
                 [':error', null],
