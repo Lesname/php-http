@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS request
     service VARCHAR(25) NOT NULL,
 
     method VARCHAR(8) NOT NULL,
-    action VARCHAR(50) NOT NULL,
+    action VARCHAR(60) NOT NULL,
 
     identity VARCHAR(77),
     identity_type VARCHAR(40) GENERATED ALWAYS AS (REGEXP_REPLACE(identity, '([a-z]+(\.[a-z]+){1,40})/([0-9a-f\-]{36})', '\\1')) stored,
