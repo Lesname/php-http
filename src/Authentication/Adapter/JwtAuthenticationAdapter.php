@@ -5,7 +5,7 @@ namespace LessHttp\Authentication\Adapter;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use LessValueObject\Composite\Reference;
+use LessValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -18,10 +18,10 @@ REGEXP;
     /**
      * @param array<mixed> $keys
      */
-    public function __construct(private array $keys)
+    public function __construct(private readonly array $keys)
     {}
 
-    public function resolve(ServerRequestInterface $request): ?Reference
+    public function resolve(ServerRequestInterface $request): ?ForeignReference
     {
         $header = $request->getHeaderLine('authorization');
 
@@ -35,7 +35,7 @@ REGEXP;
             if (isset($claims->sub)) {
                 assert(is_string($claims->sub));
 
-                return Reference::fromString($claims->sub);
+                return ForeignReference::fromString($claims->sub);
             }
         }
 

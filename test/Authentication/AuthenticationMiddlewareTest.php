@@ -5,7 +5,7 @@ namespace LessHttpTest\Authentication;
 
 use LessHttp\Authentication\Adapter\AuthenticationAdapter;
 use LessHttp\Authentication\AuthenticationMiddleware;
-use LessValueObject\Composite\Reference;
+use LessValueObject\Composite\ForeignReference;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +43,7 @@ final class AuthenticationMiddlewareTest extends TestCase
 
     public function testResolve(): void
     {
-        $reference = Reference::fromString('abc/9cd78005-5c15-40a3-8dd5-6836cee2ee81');
+        $reference = ForeignReference::fromString('abc/9cd78005-5c15-40a3-8dd5-6836cee2ee81');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request

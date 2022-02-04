@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AuthenticationMiddleware implements MiddlewareInterface
 {
-    public function __construct(private AuthenticationAdapter $adapter)
+    public function __construct(private readonly AuthenticationAdapter $adapter)
     {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

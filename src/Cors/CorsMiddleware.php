@@ -19,11 +19,11 @@ final class CorsMiddleware implements MiddlewareInterface
      * @param int $maxAge
      */
     public function __construct(
-        private ResponseFactoryInterface $responseFactory,
-        private array $origins,
-        private array $methods,
-        private array $headers,
-        private int $maxAge,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly array $origins,
+        private readonly array $methods,
+        private readonly array $headers,
+        private readonly int $maxAge,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

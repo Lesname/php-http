@@ -22,10 +22,10 @@ final class PrerequisiteMiddleware implements MiddlewareInterface
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
-        private ResponseFactoryInterface $responseFactory,
-        private StreamFactoryInterface $streamFactory,
-        private ContainerInterface $container,
-        private array $routes,
+        private readonly ResponseFactoryInterface $responseFactory,
+        private readonly StreamFactoryInterface $streamFactory,
+        private readonly ContainerInterface $container,
+        private readonly array $routes,
     ) {}
 
     /**

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace LessHttp\Authentication\Adapter;
 
-use LessValueObject\Composite\Reference;
+use LessValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthenticationAdapter
 {
-    public function resolve(ServerRequestInterface $request): ?Reference;
+    public function resolve(ServerRequestInterface $request): ?ForeignReference;
 }

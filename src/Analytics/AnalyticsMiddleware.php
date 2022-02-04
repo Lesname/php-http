@@ -15,8 +15,8 @@ use Throwable;
 final class AnalyticsMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private Connection $connection,
-        private string $service,
+        private readonly Connection $connection,
+        private readonly string $service,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
