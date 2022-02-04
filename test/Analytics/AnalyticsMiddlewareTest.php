@@ -78,11 +78,10 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
-                [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
                 [':ip', '127.0.0.1'],
@@ -99,11 +98,10 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
-                ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
                 ['`ip`', ':ip'],
@@ -197,11 +195,10 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
-                [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
                 [':ip', '127.0.0.1'],
@@ -218,11 +215,10 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
-                ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
                 ['`ip`', ':ip'],
@@ -329,13 +325,11 @@ final class AnalyticsMiddlewareTest extends TestCase
         $startTime = microtime(true);
 
         $builder = $this->createMock(QueryBuilder::class);
-
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
-                [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
                 [':ip', '127.0.0.1'],
@@ -352,11 +346,10 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
-                ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
                 ['`ip`', ':ip'],
@@ -469,11 +462,10 @@ final class AnalyticsMiddlewareTest extends TestCase
         $e = new Exception('Fiz biz');
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
                 [':service', 'fiz'],
-                [':method', 'post'],
                 [':action', 'foo.bar'],
                 [':identity', 'abc/def'],
                 [':ip', '127.0.0.1'],
@@ -490,11 +482,10 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->willReturn($builder);
 
         $builder
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
                 ['`service`', ':service'],
-                ['`method`', ':method'],
                 ['`action`', ':action'],
                 ['`identity`', ':identity'],
                 ['`ip`', ':ip'],

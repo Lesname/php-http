@@ -63,7 +63,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
 
         $values = [
             'service' => $this->service,
-            'method' => strtolower($request->getMethod()),
             'action' => $this->getAction($request),
 
             'identity' => $this->getIdentityFromRequest($request),
@@ -71,9 +70,8 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             'ip' => $this->getIpFromRequest($request),
             'user_agent' => $this->getUserAgentFromRequest($request),
 
-            'requested_on' => (int)floor($startTime * 1000),
-
-            'duration' => (int)ceil((microtime(true) - $startTime) * 1_000),
+            'requested_on' => $startTime,
+            'duration' => (int)floor($startTime * 1000) - $startTime,
 
             'response' => $response,
             'error' => $error,
@@ -123,11 +121,11 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         return $identity;
     }
 
-    private function getStartTimeFromRequest(ServerRequestInterface $request): float
+    private function getStartTimeFromRequest(ServerRequestInterface $request): int
     {
         $startTime = $request->getServerParams()['REQUEST_TIME_FLOAT'];
         assert(is_float($startTime));
 
-        return $startTime;
+        return (int)floor($startTime * 1000);
     }
 }
