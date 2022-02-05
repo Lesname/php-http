@@ -93,9 +93,11 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         $path = $request->getUri()->getPath();
         $position = strrpos($path, '/');
 
-        return is_int($position)
+        $action = is_int($position)
             ? substr($path, $position + 1)
             : $path;
+
+        return substr($action, 0, 60);
     }
 
     private function getIpFromRequest(ServerRequestInterface $request): ?string
