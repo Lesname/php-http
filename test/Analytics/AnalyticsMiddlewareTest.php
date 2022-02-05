@@ -516,7 +516,7 @@ final class AnalyticsMiddlewareTest extends TestCase
         $uri = $this->createMock(UriInterface::class);
         $uri
             ->method('getPath')
-            ->willReturn('/fiz/foo.bar');
+            ->willReturn('foo.bar');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
