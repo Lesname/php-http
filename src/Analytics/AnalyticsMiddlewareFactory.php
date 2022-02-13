@@ -4,10 +4,20 @@ declare(strict_types=1);
 namespace LessHttp\Analytics;
 
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class AnalyticsMiddlewareFactory
 {
+    /**
+     * @psalm-suppress MixedArgumentTypeCoercion
+     *
+     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): AnalyticsMiddleware
     {
         $config = $container->get('config');

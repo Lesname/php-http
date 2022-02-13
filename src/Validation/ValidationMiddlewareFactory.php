@@ -32,6 +32,8 @@ final class ValidationMiddlewareFactory
         $config = $container->get('config');
         assert(is_array($config));
         assert(is_array($config['routes']));
+        $routes = $config['routes'];
+        /** @var array<string, array<mixed>> $routes */
 
         return new ValidationMiddleware(
             $validatorBuilder,
@@ -40,7 +42,7 @@ final class ValidationMiddlewareFactory
             $routeDocumentor,
             $container,
             $cache,
-            $config['routes'],
+            $routes,
         );
     }
 }

@@ -15,6 +15,9 @@ final class JwtAuthenticationAdapterFactory
         assert(is_array($config['jwt']));
         assert(is_array($config['jwt']['keys']));
 
-        return new JwtAuthenticationAdapter($config['jwt']['keys']);
+        $keys = $config['jwt']['keys'];
+        /** @var array<array{keyMaterial: string, algorithm: string}> $keys */
+
+        return new JwtAuthenticationAdapter($keys);
     }
 }

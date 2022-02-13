@@ -82,6 +82,8 @@ final class ValidationMiddleware implements MiddlewareInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws InvalidArgumentException
+     *
+     * @psalm-suppress MixedAssignment
      */
     private function getValidatorFromRequest(ServerRequestInterface $request): ?Validator
     {

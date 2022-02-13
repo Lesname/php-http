@@ -16,7 +16,7 @@ final class JwtAuthenticationAdapter implements AuthenticationAdapter
 REGEXP;
 
     /**
-     * @param array<mixed> $keys
+     * @param array<array{keyMaterial: string, algorithm: string}> $keys
      */
     public function __construct(private readonly array $keys)
     {}

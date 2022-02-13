@@ -87,11 +87,16 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
-                [':duration', new Callback(function ($value) use ($startTime) {
-                    $diff = (int)floor((microtime(true) - $startTime) * 1000);
+                [
+                    ':duration',
+                    new Callback(
+                        function ($value) use ($startTime) {
+                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
 
-                    return $diff - $value <= 2;
-                })],
+                            return $diff - $value <= 2;
+                        }
+                    ),
+                ],
                 [':response', 200],
                 [':error', null],
             )
@@ -204,11 +209,16 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
-                [':duration', new Callback(function ($value) use ($startTime) {
-                    $diff = (int)floor((microtime(true) - $startTime) * 1000);
+                [
+                    ':duration',
+                    new Callback(
+                        function ($value) use ($startTime) {
+                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
 
-                    return $diff - $value <= 2;
-                })],
+                            return $diff - $value <= 2;
+                        },
+                    ),
+                ],
                 [':response', 422],
                 [':error', '{"fiz":"biz"}'],
             )
@@ -335,11 +345,16 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
-                [':duration', new Callback(function (int $value) use ($startTime) {
-                    $diff = (int)floor((microtime(true) - $startTime) * 1000);
+                [
+                    ':duration',
+                    new Callback(
+                        function (int $value) use ($startTime) {
+                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
 
-                    return ($diff - $value) <= 2;
-                })],
+                            return ($diff - $value) <= 2;
+                        },
+                    ),
+                ],
                 [':response', 422],
                 [':error', '"fiz"'],
             )
@@ -471,11 +486,16 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [':ip', '127.0.0.1'],
                 [':user_agent', 'local'],
                 [':requested_on', (int)floor($startTime * 1000)],
-                [':duration', new Callback(function (int $value) use ($startTime) {
-                    $diff = (int)floor((microtime(true) - $startTime) * 1000);
+                [
+                    ':duration',
+                    new Callback(
+                        function (int $value) use ($startTime) {
+                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
 
-                    return ($diff - $value) <= 2;
-                })],
+                            return ($diff - $value) <= 2;
+                        },
+                    ),
+                ],
                 [':response', 500],
                 [':error', '{"throwable":"Fiz biz"}'],
             )
