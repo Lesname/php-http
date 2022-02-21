@@ -1,0 +1,344 @@
+<?php
+declare(strict_types=1);
+
+namespace LessHttpTest\Middleware\Throttle;
+
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Exception;
+use LessHttp\Middleware\Throttle\ThrottleMiddleware;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
+
+/**
+ * @covers \LessHttp\Middleware\Throttle\ThrottleMiddleware
+ */
+final class ThrottleMiddlewareTest extends TestCase
+{
+    public function testIsThrottled(): void
+    {
+        $response = $this->createMock(ResponseInterface::class);
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $responseFactory
+            ->expects(self::once())
+            ->method('createResponse')
+            ->with(429)
+            ->willReturn($response);
+
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+        $queryBuilder
+            ->expects(self::once())
+            ->method('select')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder
+            ->expects(self::once())
+            ->method('from')
+            ->with('throttle_request')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder
+            ->expects(self::exactly(4))
+            ->method('andWhere')
+            ->withConsecutive(
+                ['action = :action'],
+                ['identity = :identity'],
+                ['ip = :ip'],
+                ['requested_on >= :since'],
+            )
+            ->willReturn($queryBuilder);
+
+        $queryBuilder
+            ->expects(self::exactly(4))
+            ->method('setParameter')
+            ->withConsecutive(
+                ['action', 'bar'],
+                ['identity', 'bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'],
+                ['ip', '127.0.0.1'],
+                ['since'],
+            )
+            ->willReturn($queryBuilder);
+
+        $queryBuilder
+            ->expects(self::once())
+            ->method('fetchOne')
+            ->willReturn('432');
+
+        $connection = $this->createMock(Connection::class);
+        $connection
+            ->expects(self::once())
+            ->method('createQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        $limits = [
+            [
+                'duration' => 999_999,
+                'points' => 321,
+            ],
+        ];
+
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('/fiz/bar');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $request
+            ->method('getAttribute')
+            ->with('identity')
+            ->willReturn('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877');
+
+        $request
+            ->method('getServerParams')
+            ->willReturn(['REMOTE_ADDR' => '127.0.0.1']);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects(self::never())
+            ->method('handle');
+
+        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+
+        self::assertSame($response, $middleware->process($request, $handler));
+    }
+
+    public function testIsNotThrottled(): void
+    {
+        $response = $this->createMock(ResponseInterface::class);
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $responseFactory
+            ->expects(self::never())
+            ->method('createResponse');
+
+        $selectQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('select')
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('from')
+            ->with('throttle_request')
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::exactly(4))
+            ->method('andWhere')
+            ->withConsecutive(
+                ['action = :action'],
+                ['identity = :identity'],
+                ['ip = :ip'],
+                ['requested_on >= :since'],
+            )
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::exactly(4))
+            ->method('setParameter')
+            ->withConsecutive(
+                ['action', 'bar'],
+                ['identity', 'bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'],
+                ['ip', '127.0.0.1'],
+                ['since'],
+            )
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('fetchOne')
+            ->willReturn('123');
+
+        $insertQueryBuilder = $this->createMock(QueryBuilder::class);
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('insert')
+            ->with('throttle_request')
+            ->willReturn($insertQueryBuilder);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('setParameters')
+            ->willReturn($insertQueryBuilder);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('executeStatement')
+            ->willReturn(1);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('values')
+            ->willReturn($insertQueryBuilder);
+
+        $connection = $this->createMock(Connection::class);
+        $connection
+            ->expects(self::exactly(2))
+            ->method('createQueryBuilder')
+            ->willReturnOnConsecutiveCalls($selectQueryBuilder, $insertQueryBuilder);
+
+        $limits = [
+            [
+                'duration' => 999_999,
+                'points' => 321,
+            ],
+        ];
+
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('bar');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $request
+            ->method('getAttribute')
+            ->with('identity')
+            ->willReturn('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877');
+
+        $request
+            ->method('getServerParams')
+            ->willReturn(['REMOTE_ADDR' => '127.0.0.1']);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects(self::once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($response);
+
+        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+
+        self::assertSame($response, $middleware->process($request, $handler));
+    }
+
+    public function testIsNotThrottledThrowable(): void
+    {
+        $this->expectException(Throwable::class);
+
+        $e = new class extends Exception {
+        };
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $responseFactory
+            ->expects(self::never())
+            ->method('createResponse');
+
+        $selectQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('select')
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('from')
+            ->with('throttle_request')
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::exactly(4))
+            ->method('andWhere')
+            ->withConsecutive(
+                ['action = :action'],
+                ['identity = :identity'],
+                ['ip = :ip'],
+                ['requested_on >= :since'],
+            )
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::exactly(4))
+            ->method('setParameter')
+            ->withConsecutive(
+                ['action', 'bar'],
+                ['identity', 'bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'],
+                ['ip', '127.0.0.1'],
+                ['since'],
+            )
+            ->willReturn($selectQueryBuilder);
+
+        $selectQueryBuilder
+            ->expects(self::once())
+            ->method('fetchOne')
+            ->willReturn('123');
+
+        $insertQueryBuilder = $this->createMock(QueryBuilder::class);
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('insert')
+            ->with('throttle_request')
+            ->willReturn($insertQueryBuilder);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('setParameters')
+            ->willReturn($insertQueryBuilder);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('executeStatement')
+            ->willReturn(1);
+
+        $insertQueryBuilder
+            ->expects(self::once())
+            ->method('values')
+            ->willReturn($insertQueryBuilder);
+
+        $connection = $this->createMock(Connection::class);
+        $connection
+            ->expects(self::exactly(2))
+            ->method('createQueryBuilder')
+            ->willReturnOnConsecutiveCalls($selectQueryBuilder, $insertQueryBuilder);
+
+        $limits = [
+            [
+                'duration' => 999_999,
+                'points' => 321,
+            ],
+        ];
+
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('bar');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $request
+            ->method('getAttribute')
+            ->with('identity')
+            ->willReturn('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877');
+
+        $request
+            ->method('getServerParams')
+            ->willReturn(['REMOTE_ADDR' => '127.0.0.1']);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects(self::once())
+            ->method('handle')
+            ->with($request)
+            ->willThrowException($e);
+
+        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+        $middleware->process($request, $handler);
+    }
+}
