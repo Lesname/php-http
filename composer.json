@@ -13,11 +13,10 @@
 
     "lessname/validator": "^0.1.4",
     "lessname/cache": "^0.1.1",
+    "lessname/database": "^0.1.0",
 
     "psr/http-server-middleware": "^1.0.1",
     "psr/http-factory": "^1.0.1",
-
-    "doctrine/dbal": "^3.3.0",
 
     "firebase/php-jwt": "^5.5.0"
   },
