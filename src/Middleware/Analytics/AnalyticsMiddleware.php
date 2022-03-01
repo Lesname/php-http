@@ -6,6 +6,8 @@ namespace LessHttp\Middleware\Analytics;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
+use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LessDatabase\Query\Builder\Applier\Values\UpdateValuesApplier;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -61,27 +63,25 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             }
         }
 
-        $values = [
-            'service' => $this->service,
-            'action' => $this->getAction($request),
+        $builder = InsertValuesApplier
+            ::forValues(
+                [
+                    'service' => $this->service,
+                    'action' => $this->getAction($request),
 
-            'identity' => $this->getIdentityFromRequest($request),
+                    'identity' => $this->getIdentityFromRequest($request),
 
-            'ip' => $this->getIpFromRequest($request),
-            'user_agent' => $this->getUserAgentFromRequest($request),
+                    'ip' => $this->getIpFromRequest($request),
+                    'user_agent' => $this->getUserAgentFromRequest($request),
 
-            'requested_on' => $startTime,
-            'duration' => (int)floor($startTime * 1000) - $startTime,
+                    'requested_on' => $startTime,
+                    'duration' => (int)floor($startTime * 1000) - $startTime,
 
-            'response' => $response,
-            'error' => $error,
-        ];
-
-        $builder = $this->connection->createQueryBuilder();
-        foreach ($values as $column => $value) {
-            $builder->setValue("`{$column}`", ":{$column}");
-            $builder->setParameter(":{$column}", $value);
-        }
+                    'response' => $response,
+                    'error' => $error,
+                ]
+            )
+            ->apply($this->connection->createQueryBuilder());
 
         $builder
             ->insert('request')
