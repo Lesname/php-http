@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Validation;
 
 use LessDocumentor\Route\RouteDocumentor;
-use LessValidator\Builder\RouteDocumentValidatorBuilder;
+use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -14,8 +14,8 @@ final class ValidationMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): ValidationMiddleware
     {
-        $validatorBuilder = $container->get(RouteDocumentValidatorBuilder::class);
-        assert($validatorBuilder instanceof RouteDocumentValidatorBuilder);
+        $validatorBuilder = $container->get(TypeDocumentValidatorBuilder::class);
+        assert($validatorBuilder instanceof TypeDocumentValidatorBuilder);
 
         $responseFactory = $container->get(ResponseFactoryInterface::class);
         assert($responseFactory instanceof ResponseFactoryInterface);

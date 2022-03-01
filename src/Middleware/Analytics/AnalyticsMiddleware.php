@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
-use LessDatabase\Query\Builder\Applier\Values\UpdateValuesApplier;
+use LessValueObject\Number\Int\Date\MilliTimestamp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -19,6 +19,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly Connection $connection,
         private readonly string $service,
+        private readonly ?MilliTimestamp $now = null,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -63,6 +64,8 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             }
         }
 
+        $now = $this->now ?? MilliTimestamp::now();
+
         $builder = InsertValuesApplier
             ::forValues(
                 [
@@ -75,7 +78,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
                     'user_agent' => $this->getUserAgentFromRequest($request),
 
                     'requested_on' => $startTime,
-                    'duration' => (int)floor($startTime * 1000) - $startTime,
+                    'duration' => $now->getValue() - $startTime,
 
                     'response' => $response,
                     'error' => $error,

@@ -6,7 +6,7 @@ namespace LessHttpTest\Middleware\Validation;
 use LessDocumentor\Route\RouteDocumentor;
 use LessHttp\Middleware\Validation\ValidationMiddleware;
 use LessHttp\Middleware\Validation\ValidationMiddlewareFactory;
-use LessValidator\Builder\RouteDocumentValidatorBuilder;
+use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -20,7 +20,7 @@ final class ValidationMiddlewareFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
         $routeDocumentor = $this->createMock(RouteDocumentor::class);
@@ -31,7 +31,7 @@ final class ValidationMiddlewareFactoryTest extends TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [RouteDocumentValidatorBuilder::class, $validatorBuilder],
+                    [TypeDocumentValidatorBuilder::class, $validatorBuilder],
                     [ResponseFactoryInterface::class, $responseFactory],
                     [StreamFactoryInterface::class, $streamFactory],
                     [RouteDocumentor::class, $routeDocumentor],
