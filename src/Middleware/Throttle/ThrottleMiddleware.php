@@ -5,6 +5,7 @@ namespace LessHttp\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -109,18 +110,8 @@ SQL;
     private function logRequest(ServerRequestInterface $request, ?ResponseInterface $response = null): void
     {
         $builder = $this->connection->createQueryBuilder();
-        $builder
-            ->insert('throttle_request')
-            ->values(
-                [
-                    'action' => ':action',
-                    'identity' => ':identity',
-                    'ip' => ':identity',
-                    'requested_on' => ':ip',
-                    'response' => ':response',
-                ],
-            )
-            ->setParameters(
+        InsertValuesApplier
+            ::forValues(
                 [
                     'action' => $this->getActionFromRequest($request),
                     'identity' => $this->getIdentityFromRequest($request),
@@ -129,6 +120,8 @@ SQL;
                     'response' => $response ? $response->getStatusCode() : 500,
                 ],
             )
+            ->apply($builder)
+            ->insert('throttle_request')
             ->executeStatement();
     }
 
