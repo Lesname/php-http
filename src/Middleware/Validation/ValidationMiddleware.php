@@ -10,6 +10,7 @@ use LessValidator\Builder\RouteDocumentValidatorBuilder;
 use LessValidator\ChainValidator;
 use LessValidator\Composite\PropertyKeysValidator;
 use LessValidator\Composite\PropertyValuesValidator;
+use LessValidator\TypeValidator;
 use LessValidator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -129,6 +130,7 @@ final class ValidationMiddleware implements MiddlewareInterface
 
         return new ChainValidator(
             [
+                TypeValidator::composite(),
                 new PropertyKeysValidator(array_keys($routeDocument->getInput())),
                 new PropertyValuesValidator(
                     array_map(
