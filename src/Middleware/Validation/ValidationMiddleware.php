@@ -6,7 +6,7 @@ namespace LessHttp\Middleware\Validation;
 use JsonException;
 use LessDocumentor\Route\RouteDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
-use LessValidator\Builder\RouteDocumentValidatorBuilder;
+use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use LessValidator\ChainValidator;
 use LessValidator\Composite\PropertyKeysValidator;
 use LessValidator\Composite\PropertyValuesValidator;
@@ -35,7 +35,7 @@ final class ValidationMiddleware implements MiddlewareInterface
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
-        private readonly RouteDocumentValidatorBuilder $validatorBuilder,
+        private readonly TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly RouteDocumentor $routeDocumentor,
@@ -135,7 +135,7 @@ final class ValidationMiddleware implements MiddlewareInterface
                 new PropertyValuesValidator(
                     array_map(
                         fn (TypeDocument $document) => $this
-                            ->validatorBuilder
+                            ->typeDocumentValidatorBuilder
                             ->fromTypeDocument($document),
                         $routeDocument->getInput(),
                     )
