@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS request
     action VARCHAR(60) NOT NULL,
 
     identity VARCHAR(77),
-    identity_type VARCHAR(40) GENERATED ALWAYS AS (REGEXP_REPLACE(identity, '([a-z]+(\.[a-z]+){1,40})/([0-9a-f\-]{36})', '\\1')) stored,
-    identity_id VARCHAR(36) GENERATED ALWAYS AS (REGEXP_REPLACE(identity, '([a-z]+(\.[a-z]+{1,40})/([0-9a-f\-]{36})', '\\2')) stored,
+    identity_type VARCHAR(40) GENERATED ALWAYS AS (REGEXP_REPLACE(identity, '^([a-z]+(\.[a-z]+){0,3})/[0-9a-f-]{36}$', '\\1')) stored,
+    identity_id VARCHAR(36) GENERATED ALWAYS AS (REGEXP_REPLACE(identity, '^[a-z]+(\.[a-z]+){0,3}/([0-9a-f-]{36})$', '\\2')) stored,
 
     ip VARCHAR(39),
     user_agent VARCHAR(255),

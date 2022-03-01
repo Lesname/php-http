@@ -168,8 +168,8 @@ final class ThrottleMiddlewareTest extends TestCase
             ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
-            ->expects(self::once())
-            ->method('setParameters')
+            ->expects(self::exactly(5))
+            ->method('setParameter')
             ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
@@ -178,8 +178,8 @@ final class ThrottleMiddlewareTest extends TestCase
             ->willReturn(1);
 
         $insertQueryBuilder
-            ->expects(self::once())
-            ->method('values')
+            ->expects(self::exactly(5))
+            ->method('setValue')
             ->willReturn($insertQueryBuilder);
 
         $connection = $this->createMock(Connection::class);
@@ -285,8 +285,8 @@ final class ThrottleMiddlewareTest extends TestCase
             ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
-            ->expects(self::once())
-            ->method('setParameters')
+            ->expects(self::exactly(5))
+            ->method('setParameter')
             ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
@@ -295,8 +295,8 @@ final class ThrottleMiddlewareTest extends TestCase
             ->willReturn(1);
 
         $insertQueryBuilder
-            ->expects(self::once())
-            ->method('values')
+            ->expects(self::exactly(5))
+            ->method('setValue')
             ->willReturn($insertQueryBuilder);
 
         $connection = $this->createMock(Connection::class);

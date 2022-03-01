@@ -6,6 +6,8 @@ namespace LessHttp\Middleware\Analytics;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
+use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LessValueObject\Number\Int\Date\MilliTimestamp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +19,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly Connection $connection,
         private readonly string $service,
+        private readonly ?MilliTimestamp $now = null,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -61,27 +64,27 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             }
         }
 
-        $values = [
-            'service' => $this->service,
-            'action' => $this->getAction($request),
+        $now = $this->now ?? MilliTimestamp::now();
 
-            'identity' => $this->getIdentityFromRequest($request),
+        $builder = InsertValuesApplier
+            ::forValues(
+                [
+                    'service' => $this->service,
+                    'action' => $this->getAction($request),
 
-            'ip' => $this->getIpFromRequest($request),
-            'user_agent' => $this->getUserAgentFromRequest($request),
+                    'identity' => $this->getIdentityFromRequest($request),
 
-            'requested_on' => $startTime,
-            'duration' => (int)floor($startTime * 1000) - $startTime,
+                    'ip' => $this->getIpFromRequest($request),
+                    'user_agent' => $this->getUserAgentFromRequest($request),
 
-            'response' => $response,
-            'error' => $error,
-        ];
+                    'requested_on' => $startTime,
+                    'duration' => $now->getValue() - $startTime,
 
-        $builder = $this->connection->createQueryBuilder();
-        foreach ($values as $column => $value) {
-            $builder->setValue("`{$column}`", ":{$column}");
-            $builder->setParameter(":{$column}", $value);
-        }
+                    'response' => $response,
+                    'error' => $error,
+                ]
+            )
+            ->apply($this->connection->createQueryBuilder());
 
         $builder
             ->insert('request')

@@ -7,10 +7,11 @@ use LessDocumentor\Route\Document\RouteDocument;
 use LessDocumentor\Route\RouteDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
 use LessHttp\Middleware\Validation\ValidationMiddleware;
-use LessValidator\Builder\RouteDocumentValidatorBuilder;
+use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use LessValidator\ChainValidator;
 use LessValidator\Composite\PropertyKeysValidator;
 use LessValidator\Composite\PropertyValuesValidator;
+use LessValidator\TypeValidator;
 use LessValidator\ValidateResult\ValidateResult;
 use LessValidator\Validator;
 use PHPUnit\Framework\TestCase;
@@ -70,7 +71,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->with([])
             ->willReturn($result);
 
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
@@ -154,7 +155,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->with([])
             ->willReturn($result);
 
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory
@@ -233,7 +234,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
@@ -306,7 +307,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->with([])
             ->willReturn($result);
 
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
@@ -400,7 +401,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->method('getInput')
             ->willReturn(['fiz' => $typeDocument]);
 
-        $validatorBuilder = $this->createMock(RouteDocumentValidatorBuilder::class);
+        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
         $validatorBuilder
             ->expects(self::once())
             ->method('fromTypeDocument')
@@ -436,6 +437,7 @@ final class ValidationMiddlewareTest extends TestCase
                 md5('validator:POST:/foo/bar'),
                 new ChainValidator(
                     [
+                        TypeValidator::composite(),
                         new PropertyKeysValidator(['fiz']),
                         new PropertyValuesValidator(['fiz' => $validator]),
                     ],

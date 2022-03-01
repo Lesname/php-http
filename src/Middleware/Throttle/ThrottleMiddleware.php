@@ -5,6 +5,7 @@ namespace LessHttp\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -63,13 +64,16 @@ final class ThrottleMiddleware implements MiddlewareInterface
         $ip = $this->getIpFromRequest($request);
 
         $pointSelect = <<<'SQL'
-SUM(
-    case
-        when floor(response / 100) = 2 THEN 1
-        when floor(response / 100) = 4 then 3
-        when floor(response / 100) = 5 then 2
-        else 5
-    end
+coalesce(
+    SUM(
+        case
+            when floor(response / 100) = 2 THEN 1
+            when floor(response / 100) = 4 then 3
+            when floor(response / 100) = 5 then 2
+            else 5
+        end
+    ),
+    '0'
 )
 SQL;
 
@@ -106,18 +110,8 @@ SQL;
     private function logRequest(ServerRequestInterface $request, ?ResponseInterface $response = null): void
     {
         $builder = $this->connection->createQueryBuilder();
-        $builder
-            ->insert('throttle_request')
-            ->values(
-                [
-                    'action' => ':action',
-                    'identity' => ':identity',
-                    'ip' => ':identity',
-                    'requested_on' => ':ip',
-                    'response' => ':response',
-                ],
-            )
-            ->setParameters(
+        InsertValuesApplier
+            ::forValues(
                 [
                     'action' => $this->getActionFromRequest($request),
                     'identity' => $this->getIdentityFromRequest($request),
@@ -126,6 +120,8 @@ SQL;
                     'response' => $response ? $response->getStatusCode() : 500,
                 ],
             )
+            ->apply($builder)
+            ->insert('throttle_request')
             ->executeStatement();
     }
 

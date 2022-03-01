@@ -6,7 +6,9 @@ namespace LessHttpTest\Middleware\Analytics;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
+use LessDatabase\Query\Builder\Helper\LabelHelper;
 use LessHttp\Middleware\Analytics\AnalyticsMiddleware;
+use LessValueObject\Number\Int\Date\MilliTimestamp;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -73,7 +75,8 @@ final class AnalyticsMiddlewareTest extends TestCase
 
     public function testHandlePostSuccess(): void
     {
-        $startTime = microtime(true);
+        $startTime = 123.456;
+        $now = new MilliTimestamp(654_321);
 
         $builder = $this->createMock(QueryBuilder::class);
 
@@ -81,24 +84,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
-                [':service', 'fiz'],
-                [':action', 'foo.bar'],
-                [':identity', 'abc/def'],
-                [':ip', '127.0.0.1'],
-                [':user_agent', 'local'],
-                [':requested_on', (int)floor($startTime * 1000)],
-                [
-                    ':duration',
-                    new Callback(
-                        function ($value) use ($startTime) {
-                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
-
-                            return $diff - $value <= 2;
-                        }
-                    ),
-                ],
-                [':response', 200],
-                [':error', null],
+                [LabelHelper::fromValue('fiz'), 'fiz'],
+                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
+                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
+                [LabelHelper::fromValue('local'), 'local'],
+                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
+                [LabelHelper::fromValue(530_865), 530_865],
+                [LabelHelper::fromValue(200), 200],
+                [LabelHelper::fromValue(null), null],
             )
             ->willReturn($builder);
 
@@ -106,15 +100,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
-                ['`service`', ':service'],
-                ['`action`', ':action'],
-                ['`identity`', ':identity'],
-                ['`ip`', ':ip'],
-                ['`user_agent`', ':user_agent'],
-                ['`requested_on`', ':requested_on'],
-                ['`duration`', ':duration'],
-                ['`response`', ':response'],
-                ['`error`', ':error'],
+                ['service', ':' . LabelHelper::fromValue('fiz')],
+                ['action', ':' . LabelHelper::fromValue('foo.bar')],
+                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
+                ['user_agent', ':' . LabelHelper::fromValue('local')],
+                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
+                ['duration', ':' . LabelHelper::fromValue(530_865)],
+                ['response', ':' . LabelHelper::fromValue(200)],
+                ['error', ':' . LabelHelper::fromValue(null)],
             )
             ->willReturn($builder);
 
@@ -188,14 +182,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new AnalyticsMiddleware($connection, 'fiz');
+        $middleware = new AnalyticsMiddleware($connection, 'fiz', $now);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
 
     public function testHandlePostErrorWithJson(): void
     {
-        $startTime = microtime(true);
+        $startTime = 123.456;
+        $now = new MilliTimestamp(654_321);
 
         $builder = $this->createMock(QueryBuilder::class);
 
@@ -203,24 +198,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
-                [':service', 'fiz'],
-                [':action', 'foo.bar'],
-                [':identity', 'abc/def'],
-                [':ip', '127.0.0.1'],
-                [':user_agent', 'local'],
-                [':requested_on', (int)floor($startTime * 1000)],
-                [
-                    ':duration',
-                    new Callback(
-                        function ($value) use ($startTime) {
-                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
-
-                            return $diff - $value <= 2;
-                        },
-                    ),
-                ],
-                [':response', 422],
-                [':error', '{"fiz":"biz"}'],
+                [LabelHelper::fromValue('fiz'), 'fiz'],
+                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
+                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
+                [LabelHelper::fromValue('local'), 'local'],
+                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
+                [LabelHelper::fromValue(530_865), 530_865],
+                [LabelHelper::fromValue(422), 422],
+                [LabelHelper::fromValue('{"fiz":"biz"}'), '{"fiz":"biz"}'],
             )
             ->willReturn($builder);
 
@@ -228,15 +214,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
-                ['`service`', ':service'],
-                ['`action`', ':action'],
-                ['`identity`', ':identity'],
-                ['`ip`', ':ip'],
-                ['`user_agent`', ':user_agent'],
-                ['`requested_on`', ':requested_on'],
-                ['`duration`', ':duration'],
-                ['`response`', ':response'],
-                ['`error`', ':error'],
+                ['service', ':' . LabelHelper::fromValue('fiz')],
+                ['action', ':' . LabelHelper::fromValue('foo.bar')],
+                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
+                ['user_agent', ':' . LabelHelper::fromValue('local')],
+                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
+                ['duration', ':' . LabelHelper::fromValue(530_865)],
+                ['response', ':' . LabelHelper::fromValue(422)],
+                ['error', ':' . LabelHelper::fromValue('{"fiz":"biz"}')],
             )
             ->willReturn($builder);
 
@@ -325,38 +311,30 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new AnalyticsMiddleware($connection, 'fiz');
+        $middleware = new AnalyticsMiddleware($connection, 'fiz', $now);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
 
     public function testHandlePostErrorWithoutJson(): void
     {
-        $startTime = microtime(true);
+        $startTime = 123.456;
+        $now = new MilliTimestamp(654_321);
 
         $builder = $this->createMock(QueryBuilder::class);
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
-                [':service', 'fiz'],
-                [':action', 'foo.bar'],
-                [':identity', 'abc/def'],
-                [':ip', '127.0.0.1'],
-                [':user_agent', 'local'],
-                [':requested_on', (int)floor($startTime * 1000)],
-                [
-                    ':duration',
-                    new Callback(
-                        function (int $value) use ($startTime) {
-                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
-
-                            return ($diff - $value) <= 2;
-                        },
-                    ),
-                ],
-                [':response', 422],
-                [':error', '"fiz"'],
+                [LabelHelper::fromValue('fiz'), 'fiz'],
+                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
+                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
+                [LabelHelper::fromValue('local'), 'local'],
+                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
+                [LabelHelper::fromValue(530_865), 530_865],
+                [LabelHelper::fromValue(422), 422],
+                [LabelHelper::fromValue('"fiz"'), '"fiz"'],
             )
             ->willReturn($builder);
 
@@ -364,15 +342,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
-                ['`service`', ':service'],
-                ['`action`', ':action'],
-                ['`identity`', ':identity'],
-                ['`ip`', ':ip'],
-                ['`user_agent`', ':user_agent'],
-                ['`requested_on`', ':requested_on'],
-                ['`duration`', ':duration'],
-                ['`response`', ':response'],
-                ['`error`', ':error'],
+                ['service', ':' . LabelHelper::fromValue('fiz')],
+                ['action', ':' . LabelHelper::fromValue('foo.bar')],
+                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
+                ['user_agent', ':' . LabelHelper::fromValue('local')],
+                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
+                ['duration', ':' . LabelHelper::fromValue(530_865)],
+                ['response', ':' . LabelHelper::fromValue(422)],
+                ['error', ':' . LabelHelper::fromValue('"fiz"')],
             )
             ->willReturn($builder);
 
@@ -461,7 +439,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new AnalyticsMiddleware($connection, 'fiz');
+        $middleware = new AnalyticsMiddleware($connection, 'fiz', $now);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -470,7 +448,8 @@ final class AnalyticsMiddlewareTest extends TestCase
     {
         $this->expectException(Throwable::class);
 
-        $startTime = microtime(true);
+        $startTime = 123.456;
+        $now = new MilliTimestamp(654_321);
 
         $builder = $this->createMock(QueryBuilder::class);
 
@@ -480,24 +459,18 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setParameter')
             ->withConsecutive(
-                [':service', 'fiz'],
-                [':action', 'foo.bar'],
-                [':identity', 'abc/def'],
-                [':ip', '127.0.0.1'],
-                [':user_agent', 'local'],
-                [':requested_on', (int)floor($startTime * 1000)],
+                [LabelHelper::fromValue('fiz'), 'fiz'],
+                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
+                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
+                [LabelHelper::fromValue('local'), 'local'],
+                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
+                [LabelHelper::fromValue(530_865), 530_865],
+                [LabelHelper::fromValue(500), 500],
                 [
-                    ':duration',
-                    new Callback(
-                        function (int $value) use ($startTime) {
-                            $diff = (int)floor((microtime(true) - $startTime) * 1000);
-
-                            return ($diff - $value) <= 2;
-                        },
-                    ),
+                    LabelHelper::fromValue('{"throwable":"Fiz biz"}'),
+                    '{"throwable":"Fiz biz"}',
                 ],
-                [':response', 500],
-                [':error', '{"throwable":"Fiz biz"}'],
             )
             ->willReturn($builder);
 
@@ -505,15 +478,15 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->expects(self::exactly(9))
             ->method('setValue')
             ->withConsecutive(
-                ['`service`', ':service'],
-                ['`action`', ':action'],
-                ['`identity`', ':identity'],
-                ['`ip`', ':ip'],
-                ['`user_agent`', ':user_agent'],
-                ['`requested_on`', ':requested_on'],
-                ['`duration`', ':duration'],
-                ['`response`', ':response'],
-                ['`error`', ':error'],
+                ['service', ':' . LabelHelper::fromValue('fiz')],
+                ['action', ':' . LabelHelper::fromValue('foo.bar')],
+                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
+                ['user_agent', ':' . LabelHelper::fromValue('local')],
+                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
+                ['duration', ':' . LabelHelper::fromValue(530_865)],
+                ['response', ':' . LabelHelper::fromValue(500)],
+                ['error', ':' . LabelHelper::fromValue('{"throwable":"Fiz biz"}')],
             )
             ->willReturn($builder);
 
@@ -581,7 +554,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->with($request)
             ->willThrowException($e);
 
-        $middleware = new AnalyticsMiddleware($connection, 'fiz');
+        $middleware = new AnalyticsMiddleware($connection, 'fiz', $now);
 
         $middleware->process($request, $handler);
     }
