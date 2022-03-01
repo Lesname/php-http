@@ -63,13 +63,16 @@ final class ThrottleMiddleware implements MiddlewareInterface
         $ip = $this->getIpFromRequest($request);
 
         $pointSelect = <<<'SQL'
-SUM(
-    case
-        when floor(response / 100) = 2 THEN 1
-        when floor(response / 100) = 4 then 3
-        when floor(response / 100) = 5 then 2
-        else 5
-    end
+coalesce(
+    SUM(
+        case
+            when floor(response / 100) = 2 THEN 1
+            when floor(response / 100) = 4 then 3
+            when floor(response / 100) = 5 then 2
+            else 5
+        end
+    ),
+    '0'
 )
 SQL;
 
