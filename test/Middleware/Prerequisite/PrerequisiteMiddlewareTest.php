@@ -38,6 +38,10 @@ final class PrerequisiteMiddlewareTest extends TestCase
             ->method('getUri')
             ->willReturn($uri);
 
+        $request
+            ->method('getMethod')
+            ->willReturn('POST');
+
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
             ->expects(self::once())
@@ -59,15 +63,16 @@ final class PrerequisiteMiddlewareTest extends TestCase
             ->with($prerequisite::class)
             ->willReturn($prerequisite);
 
-        $routes = [
-            '/foo' => [
-                'prerequisites' => [
+        $middleware = new PrerequisiteMiddleware(
+            $responseFactory,
+            $streamFactory,
+            $container,
+            [
+                'POST:/foo' => [
                     $prerequisite::class,
                 ],
             ],
-        ];
-
-        $middleware = new PrerequisiteMiddleware($responseFactory, $streamFactory, $container, $routes);
+        );
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -120,6 +125,10 @@ final class PrerequisiteMiddlewareTest extends TestCase
             ->method('getUri')
             ->willReturn($uri);
 
+        $request
+            ->method('getMethod')
+            ->willReturn('POST');
+
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
             ->expects(self::never())
@@ -142,15 +151,16 @@ final class PrerequisiteMiddlewareTest extends TestCase
             ->with($prerequisite::class)
             ->willReturn($prerequisite);
 
-        $routes = [
-            '/foo' => [
-                'prerequisites' => [
+        $middleware = new PrerequisiteMiddleware(
+            $responseFactory,
+            $streamFactory,
+            $container,
+            [
+                'POST:/foo' => [
                     $prerequisite::class,
                 ],
             ],
-        ];
-
-        $middleware = new PrerequisiteMiddleware($responseFactory, $streamFactory, $container, $routes);
+        );
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
