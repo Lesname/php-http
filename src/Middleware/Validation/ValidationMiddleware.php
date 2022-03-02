@@ -6,6 +6,7 @@ namespace LessHttp\Middleware\Validation;
 use JsonException;
 use LessDocumentor\Route\RouteDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
+use LessHttp\Response\ErrorResponse;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use LessValidator\ChainValidator;
 use LessValidator\Composite\PropertyKeysValidator;
@@ -59,20 +60,22 @@ final class ValidationMiddleware implements MiddlewareInterface
             $result = $validator->validate($body);
 
             if (!$result->isValid()) {
-                $json = json_encode(
-                    [
-                        'message' => 'Invalid parameters provided',
-                        'code' => 'invalidBody',
-                        'data' => $result,
-                    ],
-                    flags: JSON_THROW_ON_ERROR,
+                $stream = $this->streamFactory->createStream(
+                    json_encode(
+                        new ErrorResponse(
+                            'Invalid parameters provided',
+                            'invalidBody',
+                            $result,
+                        ),
+                        flags: JSON_THROW_ON_ERROR,
+                    ),
                 );
 
                 return $this
                     ->responseFactory
                     ->createResponse(422)
                     ->withHeader('content-type', 'application/json')
-                    ->withBody($this->streamFactory->createStream($json));
+                    ->withBody($stream);
             }
         }
 
