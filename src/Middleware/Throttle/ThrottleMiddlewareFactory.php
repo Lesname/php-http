@@ -6,6 +6,7 @@ namespace LessHttp\Middleware\Throttle;
 use Doctrine\DBAL\Connection;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 final class ThrottleMiddlewareFactory
 {
@@ -13,6 +14,9 @@ final class ThrottleMiddlewareFactory
     {
         $responseFactory = $container->get(ResponseFactoryInterface::class);
         assert($responseFactory instanceof ResponseFactoryInterface);
+
+        $streamFactory = $container->get(StreamFactoryInterface::class);
+        assert($streamFactory instanceof StreamFactoryInterface);
 
         $connection = $container->get(Connection::class);
         assert($connection instanceof Connection);
@@ -26,6 +30,6 @@ final class ThrottleMiddlewareFactory
         $limits = $settings['limits'];
         /** @var array<array{duration: int, points: int}> $limits */
 
-        return new ThrottleMiddleware($responseFactory, $connection, $limits);
+        return new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
     }
 }

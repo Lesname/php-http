@@ -10,6 +10,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -24,6 +26,8 @@ final class AuthorizationMiddlewareTest extends TestCase
         $uri
             ->method('getPath')
             ->willReturn('/foo');
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -56,6 +60,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         $middleware = new AuthorizationMiddleware(
             $responseFactory,
+            $streamFactory,
             $container,
             [
                 '/foo' => [
@@ -81,7 +86,20 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getUri')
             ->willReturn($uri);
 
+        $stream = $this->createMock(StreamInterface::class);
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory
+            ->expects(self::once())
+            ->method('createStream')
+            ->willReturn($stream);
+
         $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->expects(self::once())
+            ->method('withBody')
+            ->with($stream)
+            ->willReturn($response);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
@@ -110,6 +128,7 @@ final class AuthorizationMiddlewareTest extends TestCase
 
         $middleware = new AuthorizationMiddleware(
             $responseFactory,
+            $streamFactory,
             $container,
             [
                 '/foo' => [

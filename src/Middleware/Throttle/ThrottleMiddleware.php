@@ -5,10 +5,13 @@ namespace LessHttp\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use JsonException;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LessHttp\Response\ErrorResponse;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
@@ -22,6 +25,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
+        private readonly StreamFactoryInterface $streamFactory,
         private readonly Connection $connection,
         private readonly array $limits,
     ) {
@@ -30,13 +34,25 @@ final class ThrottleMiddleware implements MiddlewareInterface
 
     /**
      * @throws Exception
+     * @throws JsonException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isThrottled($request)) {
+            $stream = $this->streamFactory->createStream(
+                json_encode(
+                    new ErrorResponse(
+                        'Too many requests',
+                        'tooManyRequests',
+                    ),
+                    flags: JSON_THROW_ON_ERROR,
+                ),
+            );
+
             return $this
                 ->responseFactory
-                ->createResponse(429);
+                ->createResponse(429)
+                ->withBody($stream);
         }
 
         try {
