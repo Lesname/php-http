@@ -11,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
@@ -22,7 +24,20 @@ final class ThrottleMiddlewareTest extends TestCase
 {
     public function testIsThrottled(): void
     {
+        $stream = $this->createMock(StreamInterface::class);
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory
+            ->expects(self::once())
+            ->method('createStream')
+            ->willReturn($stream);
+
         $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->expects(self::once())
+            ->method('withBody')
+            ->with($stream)
+            ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory
@@ -107,13 +122,15 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
 
     public function testIsNotThrottled(): void
     {
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
         $response = $this->createMock(ResponseInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
@@ -221,7 +238,7 @@ final class ThrottleMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -232,6 +249,8 @@ final class ThrottleMiddlewareTest extends TestCase
 
         $e = new class extends Exception {
         };
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory
@@ -338,7 +357,7 @@ final class ThrottleMiddlewareTest extends TestCase
             ->with($request)
             ->willThrowException($e);
 
-        $middleware = new ThrottleMiddleware($responseFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
         $middleware->process($request, $handler);
     }
 }

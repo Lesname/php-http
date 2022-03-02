@@ -9,6 +9,7 @@ use LessHttp\Middleware\Throttle\ThrottleMiddlewareFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * @covers \LessHttp\Middleware\Throttle\ThrottleMiddlewareFactory
@@ -17,6 +18,8 @@ final class ThrottleMiddlewareFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
         $connection = $this->createMock(Connection::class);
@@ -34,11 +37,12 @@ final class ThrottleMiddlewareFactoryTest extends TestCase
 
         $container = $this->createMock(ContainerInterface::class);
         $container
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(4))
             ->method('get')
             ->willReturnMap(
                 [
                     [ResponseFactoryInterface::class, $responseFactory],
+                    [StreamFactoryInterface::class, $streamFactory],
                     [Connection::class, $connection],
                     ['config', $config],
                 ],

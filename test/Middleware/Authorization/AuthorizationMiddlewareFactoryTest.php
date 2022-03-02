@@ -8,6 +8,7 @@ use LessHttp\Middleware\Authorization\AuthorizationMiddlewareFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  * @covers \LessHttp\Middleware\Authorization\AuthorizationMiddlewareFactory
@@ -16,6 +17,8 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
         $container = $this->createMock(ContainerInterface::class);
@@ -34,6 +37,10 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
                     [
                         ResponseFactoryInterface::class,
                         $responseFactory,
+                    ],
+                    [
+                        StreamFactoryInterface::class,
+                        $streamFactory,
                     ],
                 ],
             );
