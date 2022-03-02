@@ -34,6 +34,10 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('getUri')
             ->willReturn($uri);
 
+        $request
+            ->method('getMethod')
+            ->willReturn('POST');
+
         $response = $this->createMock(ResponseInterface::class);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -63,10 +67,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             $streamFactory,
             $container,
             [
-                '/foo' => [
-                    'authorizations' => [
-                        $constraint::class,
-                    ],
+                'POST:/foo' => [
+                    $constraint::class,
                 ],
             ],
         );
@@ -85,6 +87,10 @@ final class AuthorizationMiddlewareTest extends TestCase
         $request
             ->method('getUri')
             ->willReturn($uri);
+
+        $request
+            ->method('getMethod')
+            ->willReturn('POST');
 
         $stream = $this->createMock(StreamInterface::class);
 
@@ -131,10 +137,8 @@ final class AuthorizationMiddlewareTest extends TestCase
             $streamFactory,
             $container,
             [
-                '/foo' => [
-                    'authorizations' => [
-                        $constraint::class,
-                    ],
+                'POST:/foo' => [
+                    $constraint::class,
                 ],
             ],
         );
