@@ -19,14 +19,22 @@ use ReflectionClass;
 final class PrerequisiteMiddleware implements MiddlewareInterface
 {
     /**
-     * @param array<string, array<mixed>> $routes
+     * @param array<string, array<string>> $prerequisites
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly ContainerInterface $container,
-        private readonly array $routes,
+        private readonly array $prerequisites,
     ) {}
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function getPrerequisites(): array
+    {
+        return $this->prerequisites;
+    }
 
     /**
      * @throws ContainerExceptionInterface
@@ -35,14 +43,12 @@ final class PrerequisiteMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $method = $request->getMethod();
         $path = $request->getUri()->getPath();
+        $key = "{$method}:{$path}";
 
-        if (isset($this->routes[$path]['prerequisites'])) {
-            $prerequisites = $this->routes[$path]['prerequisites'];
-            assert(is_array($prerequisites));
-            /** @var array<string> $prerequisites */
-
-            foreach ($prerequisites as $prerequisite) {
+        if (isset($this->prerequisites[$key])) {
+            foreach ($this->prerequisites[$key] as $prerequisite) {
                 $constraint = $this->container->get($prerequisite);
                 assert($constraint instanceof PrerequisiteConstraint);
 

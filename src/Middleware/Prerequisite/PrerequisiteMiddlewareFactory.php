@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace LessHttp\Middleware\Prerequisite;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 final class PrerequisiteMiddlewareFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): PrerequisiteMiddleware
     {
         $responseFactory = $container->get(ResponseFactoryInterface::class);
@@ -21,14 +27,33 @@ final class PrerequisiteMiddlewareFactory
         assert(is_array($config));
 
         assert(is_array($config['routes']));
-        $routes = $config['routes'];
-        /** @var array<string, array<mixed>> $routes */
 
         return new PrerequisiteMiddleware(
             $responseFactory,
             $streamFactory,
             $container,
-            $routes,
+            $this->parsePrerequisites($config['routes']),
+        );
+    }
+
+    /**
+     * @param array<mixed> $routes
+     *
+     * @return array<string, array<string>>
+     *
+     * @psalm-suppress MixedInferredReturnType
+     * @psalm-suppress MixedReturnTypeCoercion
+     * @psalm-suppress MixedReturnStatement
+     */
+    private function parsePrerequisites(array $routes): array
+    {
+        return array_map(
+            static fn(array $route): array => $route['prerequisites'],
+            array_filter(
+                $routes,
+                static fn(array $route): bool => isset($route['prerequisites'])
+                    && $route['prerequisites'],
+            ),
         );
     }
 }

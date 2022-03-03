@@ -19,14 +19,22 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
     /**
-     * @param array<string, array<mixed>> $routes
+     * @param array<string, array<string>> $authorizations
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly ContainerInterface $container,
-        private readonly array $routes,
+        private readonly array $authorizations,
     ) {}
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function getAuthorizations(): array
+    {
+        return $this->authorizations;
+    }
 
     /**
      * @throws ContainerExceptionInterface
@@ -35,12 +43,12 @@ final class AuthorizationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $method = $request->getMethod();
         $path = $request->getUri()->getPath();
+        $key = "{$method}:{$path}";
 
-        if (isset($this->routes[$path]['authorizations'])) {
-            $authorizations = $this->routes[$path]['authorizations'];
-            assert(is_array($authorizations));
-            /** @var array<string> $authorizations */
+        if (isset($this->authorizations[$key])) {
+            $authorizations = $this->authorizations[$key];
 
             if (!$this->isAllowed($request, $authorizations)) {
                 $stream = $this->streamFactory->createStream(
