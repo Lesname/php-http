@@ -29,6 +29,14 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     ) {}
 
     /**
+     * @return array<string, array<string>>
+     */
+    public function getAuthorizations(): array
+    {
+        return $this->authorizations;
+    }
+
+    /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws JsonException

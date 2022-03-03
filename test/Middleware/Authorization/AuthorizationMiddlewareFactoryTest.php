@@ -30,7 +30,10 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
                         'config',
                         [
                             'routes' => [
-
+                                'a' => [
+                                    'authorizations' => ['b'],
+                                ],
+                                'c' => [],
                             ],
                         ],
                     ],
@@ -49,5 +52,9 @@ final class AuthorizationMiddlewareFactoryTest extends TestCase
         $result = $factory($container);
 
         self::assertInstanceOf(AuthorizationMiddleware::class, $result);
+        self::assertSame(
+            ['a' => ['b']],
+            $result->getAuthorizations(),
+        );
     }
 }

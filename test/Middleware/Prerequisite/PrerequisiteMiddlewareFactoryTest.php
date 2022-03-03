@@ -30,7 +30,10 @@ final class PrerequisiteMiddlewareFactoryTest extends TestCase
                         'config',
                         [
                             'routes' => [
-
+                                'a' => [
+                                    'prerequisites' => ['b'],
+                                ],
+                                'c' => [],
                             ],
                         ],
                     ],
@@ -49,5 +52,9 @@ final class PrerequisiteMiddlewareFactoryTest extends TestCase
         $result = $factory($container);
 
         self::assertInstanceOf(PrerequisiteMiddleware::class, $result);
+        self::assertSame(
+            ['a' => ['b']],
+            $result->getPrerequisites(),
+        );
     }
 }

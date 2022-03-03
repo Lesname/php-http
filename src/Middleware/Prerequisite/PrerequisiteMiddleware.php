@@ -29,6 +29,14 @@ final class PrerequisiteMiddleware implements MiddlewareInterface
     ) {}
 
     /**
+     * @return array<string, array<string>>
+     */
+    public function getPrerequisites(): array
+    {
+        return $this->prerequisites;
+    }
+
+    /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws JsonException

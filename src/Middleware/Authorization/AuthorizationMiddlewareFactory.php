@@ -14,8 +14,6 @@ final class AuthorizationMiddlewareFactory
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     *
-     * @psalm-suppress MixedArgumentTypeCoercion
      */
     public function __invoke(ContainerInterface $container): AuthorizationMiddleware
     {
@@ -39,22 +37,23 @@ final class AuthorizationMiddlewareFactory
     }
 
     /**
-     * @param array<array{path: string, allowed_methods: array<string>, authorizations: array<string>|null}> $routes
+     * @param array<mixed> $routes
      *
      * @return array<string, array<string>>
+     *
+     * @psalm-suppress MixedInferredReturnType
+     * @psalm-suppress MixedReturnTypeCoercion
+     * @psalm-suppress MixedReturnStatement
      */
     private function parseAuthorizations(array $routes): array
     {
-        $authorizations = [];
-
-        foreach ($routes as $route) {
-            if (isset($route['authorizations']) && $route['authorizations']) {
-                foreach ($route['allowed_methods'] as $method) {
-                    $authorizations["{$method}:{$route['path']}"] = $route['authorizations'];
-                }
-            }
-        }
-
-        return $authorizations;
+        return array_map(
+            static fn(array $route): array => $route['authorizations'],
+            array_filter(
+                $routes,
+                static fn(array $route): bool => isset($route['authorizations'])
+                    && $route['authorizations'],
+            ),
+        );
     }
 }
