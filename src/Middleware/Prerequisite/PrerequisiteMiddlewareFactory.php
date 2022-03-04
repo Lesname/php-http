@@ -11,6 +11,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 final class PrerequisiteMiddlewareFactory
 {
+    public const ROUTE_KEY = 'prerequisites';
+
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -48,11 +50,11 @@ final class PrerequisiteMiddlewareFactory
     private function parsePrerequisites(array $routes): array
     {
         return array_map(
-            static fn(array $route): array => $route['prerequisites'],
+            static fn(array $route): array => $route[self::ROUTE_KEY],
             array_filter(
                 $routes,
-                static fn(array $route): bool => isset($route['prerequisites'])
-                    && $route['prerequisites'],
+                static fn(array $route): bool => isset($route[self::ROUTE_KEY])
+                    && $route[self::ROUTE_KEY],
             ),
         );
     }
