@@ -5,7 +5,11 @@ namespace LessHttp\Middleware\Authentication\Adapter;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use LessValueObject\Composite\Exception\CannotParseReference;
 use LessValueObject\Composite\ForeignReference;
+use LessValueObject\String\Exception\TooLong;
+use LessValueObject\String\Exception\TooShort;
+use LessValueObject\String\Format\Exception\NotFormat;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -21,6 +25,12 @@ REGEXP;
     public function __construct(private readonly array $keys)
     {}
 
+    /**
+     * @throws CannotParseReference
+     * @throws TooLong
+     * @throws TooShort
+     * @throws NotFormat
+     */
     public function resolve(ServerRequestInterface $request): ?ForeignReference
     {
         $header = $request->getHeaderLine('authorization');

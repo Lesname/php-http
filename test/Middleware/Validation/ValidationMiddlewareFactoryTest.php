@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LessHttpTest\Middleware\Validation;
 
-use LessDocumentor\Route\RouteDocumentor;
+use LessDocumentor\Route\Input\RouteInputDocumentor;
 use LessHttp\Middleware\Validation\ValidationMiddleware;
 use LessHttp\Middleware\Validation\ValidationMiddlewareFactory;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
@@ -23,18 +23,19 @@ final class ValidationMiddlewareFactoryTest extends TestCase
         $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
         $cache = $this->createMock(CacheInterface::class);
 
         $container = $this->createMock(ContainerInterface::class);
         $container
+            ->expects(self::exactly(6))
             ->method('get')
             ->willReturnMap(
                 [
                     [TypeDocumentValidatorBuilder::class, $validatorBuilder],
                     [ResponseFactoryInterface::class, $responseFactory],
                     [StreamFactoryInterface::class, $streamFactory],
-                    [RouteDocumentor::class, $routeDocumentor],
+                    [RouteInputDocumentor::class, $routeInputDocumentor],
                     [CacheInterface::class, $cache],
                     [
                         'config',

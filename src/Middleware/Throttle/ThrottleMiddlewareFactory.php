@@ -4,12 +4,18 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 final class ThrottleMiddlewareFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): ThrottleMiddleware
     {
         $responseFactory = $container->get(ResponseFactoryInterface::class);

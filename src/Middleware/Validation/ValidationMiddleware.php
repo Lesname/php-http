@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Validation;
 
 use JsonException;
-use LessDocumentor\Route\RouteDocumentor;
+use LessDocumentor\Route\Input\RouteInputDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
 use LessHttp\Response\ErrorResponse;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
@@ -28,18 +28,19 @@ use Psr\SimpleCache\InvalidArgumentException;
 final class ValidationMiddleware implements MiddlewareInterface
 {
     /**
+     * @param TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder
+     * @param RouteInputDocumentor $routeInputDocumentor
      * @param ResponseFactoryInterface $responseFactory
      * @param StreamFactoryInterface $streamFactory
-     * @param RouteDocumentor $routeDocumentor
      * @param ContainerInterface $container
      * @param CacheInterface $cache
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
         private readonly TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder,
+        private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
-        private readonly RouteDocumentor $routeDocumentor,
         private readonly ContainerInterface $container,
         private readonly CacheInterface $cache,
         private readonly array $routes,
@@ -129,18 +130,18 @@ final class ValidationMiddleware implements MiddlewareInterface
             return $validator;
         }
 
-        $routeDocument = $this->routeDocumentor->document($routeSettings);
+        $input = $this->routeInputDocumentor->document($routeSettings);
 
         return new ChainValidator(
             [
                 TypeValidator::composite(),
-                new PropertyKeysValidator(array_keys($routeDocument->getInput())),
+                new PropertyKeysValidator(array_keys($input)),
                 new PropertyValuesValidator(
                     array_map(
                         fn (TypeDocument $document) => $this
                             ->typeDocumentValidatorBuilder
                             ->fromTypeDocument($document),
-                        $routeDocument->getInput(),
+                        $input,
                     )
                 ),
             ],
