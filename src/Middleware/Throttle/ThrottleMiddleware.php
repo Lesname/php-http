@@ -43,7 +43,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
                 json_encode(
                     new ErrorResponse(
                         'Too many requests',
-                        'tooManyRequests',
+                        'throttle.tooManyRequests',
                     ),
                     flags: JSON_THROW_ON_ERROR,
                 ),
