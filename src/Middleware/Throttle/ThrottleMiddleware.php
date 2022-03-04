@@ -43,7 +43,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
                 json_encode(
                     new ErrorResponse(
                         'Too many requests',
-                        'tooManyRequests',
+                        'throttle.tooManyRequests',
                     ),
                     flags: JSON_THROW_ON_ERROR,
                 ),
@@ -75,7 +75,6 @@ final class ThrottleMiddleware implements MiddlewareInterface
      */
     private function isThrottled(ServerRequestInterface $request): bool
     {
-        $action = $this->getActionFromRequest($request);
         $identity = $this->getIdentityFromRequest($request);
         $ip = $this->getIpFromRequest($request);
 
@@ -95,22 +94,25 @@ SQL;
 
         $now = (int)floor(microtime(true) * 1_000);
 
+        $builder = $this->connection->createQueryBuilder();
+        $builder->select($pointSelect)->from('throttle_request');
+
+        if ($identity !== null) {
+            $builder->andWhere('identity = :identity')->setParameter('identity', $identity);
+        } elseif ($ip !== null) {
+            $builder->andWhere('ip = :ip')->setParameter('ip', $ip);
+        } else {
+            return false;
+        }
+
         foreach ($this->limits as $limit) {
-            $builder = $this->connection->createQueryBuilder();
-            $points = $builder
-                ->select($pointSelect)
-                ->from('throttle_request')
-                ->andWhere('action = :action')
-                ->setParameter('action', $action)
-                ->andWhere('identity = :identity')
-                ->setParameter('identity', $identity)
-                ->andWhere('ip = :ip')
-                ->setParameter('ip', $ip)
+            $limitBuilder = clone $builder;
+            $points = $limitBuilder
                 ->andWhere('requested_on >= :since')
-                ->setParameter('since', $now - $limit['duration'])
+                ->setParameter('since', $now - ($limit['duration'] * 1_000))
                 ->fetchOne();
 
-            assert(is_string($points) && ctype_digit($points));
+            assert((is_string($points) && ctype_digit($points)) || is_int($points));
 
             if ($points >= $limit['points']) {
                 return true;
