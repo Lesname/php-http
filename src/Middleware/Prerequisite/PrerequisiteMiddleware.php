@@ -53,7 +53,13 @@ final class PrerequisiteMiddleware implements MiddlewareInterface
                 assert($constraint instanceof PrerequisiteConstraint);
 
                 if (!$constraint->isSatisfied($request)) {
-                    $name = lcfirst((new ReflectionClass($constraint))->getShortName());
+                    $name = lcfirst(
+                        str_replace(
+                            ['Prerequisite', 'Constraint'],
+                            '',
+                            (new ReflectionClass($constraint))->getShortName(),
+                        ),
+                    );
 
                     $json = json_encode(
                         [
