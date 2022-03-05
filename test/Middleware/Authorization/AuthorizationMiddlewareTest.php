@@ -106,6 +106,11 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->method('withBody')
             ->with($stream)
             ->willReturn($response);
+        $response
+            ->expects(self::once())
+            ->method('withAddedHeader')
+            ->with('content-type', 'application/json')
+            ->willReturn($response);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
