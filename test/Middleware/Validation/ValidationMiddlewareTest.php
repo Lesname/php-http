@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LessHttpTest\Middleware\Validation;
 
 use LessDocumentor\Route\Document\RouteDocument;
+use LessDocumentor\Route\Input\RouteInputDocumentor;
 use LessDocumentor\Route\RouteDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
 use LessHttp\Middleware\Validation\ValidationMiddleware;
@@ -77,7 +78,7 @@ final class ValidationMiddlewareTest extends TestCase
 
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
 
         $container = $this->createMock(ContainerInterface::class);
 
@@ -92,9 +93,9 @@ final class ValidationMiddlewareTest extends TestCase
 
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
+            $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
-            $routeDocumentor,
             $container,
             $cache,
             $routes,
@@ -179,7 +180,7 @@ final class ValidationMiddlewareTest extends TestCase
             )
             ->willReturn($stream);
 
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
 
         $container = $this->createMock(ContainerInterface::class);
 
@@ -194,9 +195,9 @@ final class ValidationMiddlewareTest extends TestCase
 
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
+            $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
-            $routeDocumentor,
             $container,
             $cache,
             $routes,
@@ -240,7 +241,7 @@ final class ValidationMiddlewareTest extends TestCase
 
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
 
         $container = $this->createMock(ContainerInterface::class);
 
@@ -255,9 +256,9 @@ final class ValidationMiddlewareTest extends TestCase
 
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
+            $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
-            $routeDocumentor,
             $container,
             $cache,
             $routes,
@@ -313,7 +314,7 @@ final class ValidationMiddlewareTest extends TestCase
 
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
 
         $container = $this->createMock(ContainerInterface::class);
         $container
@@ -342,9 +343,9 @@ final class ValidationMiddlewareTest extends TestCase
 
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
+            $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
-            $routeDocumentor,
             $container,
             $cache,
             $routes,
@@ -396,11 +397,6 @@ final class ValidationMiddlewareTest extends TestCase
 
         $typeDocument = $this->createMock(TypeDocument::class);
 
-        $routeDocument = $this->createMock(RouteDocument::class);
-        $routeDocument
-            ->method('getInput')
-            ->willReturn(['fiz' => $typeDocument]);
-
         $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
         $validatorBuilder
             ->expects(self::once())
@@ -411,12 +407,12 @@ final class ValidationMiddlewareTest extends TestCase
 
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
-        $routeDocumentor = $this->createMock(RouteDocumentor::class);
-        $routeDocumentor
+        $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
+        $routeInputDocumentor
             ->expects(self::once())
             ->method('document')
             ->with([])
-            ->willReturn($routeDocument);
+            ->willReturn(['fiz' => $typeDocument]);
 
         $container = $this->createMock(ContainerInterface::class);
         $container
@@ -451,9 +447,9 @@ final class ValidationMiddlewareTest extends TestCase
 
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
+            $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
-            $routeDocumentor,
             $container,
             $cache,
             $routes,

@@ -7,6 +7,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LessValueObject\Number\Exception\MaxOutBounds;
+use LessValueObject\Number\Exception\MinOutBounds;
+use LessValueObject\Number\Exception\PrecisionOutBounds;
 use LessValueObject\Number\Int\Date\MilliTimestamp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +25,13 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         private readonly ?MilliTimestamp $now = null,
     ) {}
 
+    /**
+     * @throws MinOutBounds
+     * @throws PrecisionOutBounds
+     * @throws Exception
+     * @throws JsonException
+     * @throws MaxOutBounds
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (in_array(strtolower($request->getMethod()), ['options', 'head'], true)) {
@@ -42,6 +52,9 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     }
 
     /**
+     * @throws MaxOutBounds
+     * @throws MinOutBounds
+     * @throws PrecisionOutBounds
      * @throws Exception
      * @throws JsonException
      */

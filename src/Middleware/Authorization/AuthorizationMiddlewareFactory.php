@@ -11,6 +11,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 final class AuthorizationMiddlewareFactory
 {
+    public const ROUTE_KEY = 'authorizations';
+
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -48,11 +50,11 @@ final class AuthorizationMiddlewareFactory
     private function parseAuthorizations(array $routes): array
     {
         return array_map(
-            static fn(array $route): array => $route['authorizations'],
+            static fn(array $route): array => $route[self::ROUTE_KEY],
             array_filter(
                 $routes,
-                static fn(array $route): bool => isset($route['authorizations'])
-                    && $route['authorizations'],
+                static fn(array $route): bool => isset($route[self::ROUTE_KEY])
+                    && $route[self::ROUTE_KEY],
             ),
         );
     }
