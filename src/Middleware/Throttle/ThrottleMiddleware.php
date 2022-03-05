@@ -52,6 +52,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
             return $this
                 ->responseFactory
                 ->createResponse(429)
+                ->withAddedHeader('content-type', 'application/json')
                 ->withBody($stream);
         }
 
