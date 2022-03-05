@@ -38,6 +38,11 @@ final class ThrottleMiddlewareTest extends TestCase
             ->method('withBody')
             ->with($stream)
             ->willReturn($response);
+        $response
+            ->expects(self::once())
+            ->method('withAddedHeader')
+            ->with('content-type', 'application/json')
+            ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $responseFactory

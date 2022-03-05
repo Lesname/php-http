@@ -64,6 +64,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
                 return $this
                     ->responseFactory
                     ->createResponse(403)
+                    ->withAddedHeader('content-type', 'application/json')
                     ->withBody($stream);
             }
         }
