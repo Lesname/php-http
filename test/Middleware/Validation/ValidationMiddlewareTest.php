@@ -392,7 +392,7 @@ final class ValidationMiddlewareTest extends TestCase
         $validator
             ->expects(self::once())
             ->method('validate')
-            ->with('biz')
+            ->with(['fiz' => 'biz'])
             ->willReturn($result);
 
         $typeDocument = $this->createMock(TypeDocument::class);
@@ -412,7 +412,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->expects(self::once())
             ->method('document')
             ->with([])
-            ->willReturn(['fiz' => $typeDocument]);
+            ->willReturn($typeDocument);
 
         $container = $this->createMock(ContainerInterface::class);
         $container
@@ -431,13 +431,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->method('set')
             ->with(
                 md5('validator:POST:/foo/bar'),
-                new ChainValidator(
-                    [
-                        TypeValidator::composite(),
-                        new PropertyKeysValidator(['fiz']),
-                        new PropertyValuesValidator(['fiz' => $validator]),
-                    ],
-                ),
+                $validator,
             );
 
         $routes = [
