@@ -49,7 +49,7 @@ final class CorsMiddleware implements MiddlewareInterface
         }
 
         if (in_array($request->getHeaderLine('origin'), $this->origins)) {
-            $response
+            $response = $response
                 ->withHeader('access-control-allow-origin', $request->getHeaderLine('origin'))
                 ->withHeader('access-control-max-age', (string)$this->maxAge);
         }
