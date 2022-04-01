@@ -130,22 +130,11 @@ final class ValidationMiddleware implements MiddlewareInterface
             return $validator;
         }
 
-        $input = $this->routeInputDocumentor->document($routeSettings);
+        $document = $this->routeInputDocumentor->document($routeSettings);
 
-        return new ChainValidator(
-            [
-                TypeValidator::composite(),
-                new PropertyKeysValidator(array_keys($input)),
-                new PropertyValuesValidator(
-                    array_map(
-                        fn (TypeDocument $document) => $this
-                            ->typeDocumentValidatorBuilder
-                            ->fromTypeDocument($document),
-                        $input,
-                    )
-                ),
-            ],
-        );
+        return $this
+            ->typeDocumentValidatorBuilder
+            ->fromTypeDocument($document);
     }
 
     /**
