@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception;
 use JsonException;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LessHttp\Response\ErrorResponse;
+use LessValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -159,9 +160,11 @@ SQL;
     private function getIdentityFromRequest(ServerRequestInterface $request): ?string
     {
         $identity = $request->getAttribute('identity');
-        assert($identity === null || is_string($identity));
+        assert($identity === null || $identity instanceof ForeignReference);
 
-        return $identity;
+        return $identity instanceof ForeignReference
+            ? (string)$identity
+            : null;
     }
 
     private function getIpFromRequest(ServerRequestInterface $request): ?string

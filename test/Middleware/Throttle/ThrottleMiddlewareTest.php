@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
 use LessHttp\Middleware\Throttle\ThrottleMiddleware;
+use LessValueObject\Composite\ForeignReference;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -112,7 +113,7 @@ final class ThrottleMiddlewareTest extends TestCase
         $request
             ->method('getAttribute')
             ->with('identity')
-            ->willReturn('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877');
+            ->willReturn(ForeignReference::fromString('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'));
 
         $request
             ->method('getServerParams')
@@ -337,7 +338,7 @@ final class ThrottleMiddlewareTest extends TestCase
         $request
             ->method('getAttribute')
             ->with('identity')
-            ->willReturn('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877');
+            ->willReturn(ForeignReference::fromString('bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'));
 
         $request
             ->method('getServerParams')
