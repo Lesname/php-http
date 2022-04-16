@@ -135,6 +135,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     private function getIdentityFromRequest(ServerRequestInterface $request): ?string
     {
         $identity = $request->getAttribute('identity');
+        assert($identity === null || $identity instanceof ForeignReference);
 
         return $identity instanceof ForeignReference
             ? (string)$identity
