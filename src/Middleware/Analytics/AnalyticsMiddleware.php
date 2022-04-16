@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LessValueObject\Composite\ForeignReference;
 use LessValueObject\Number\Exception\MaxOutBounds;
 use LessValueObject\Number\Exception\MinOutBounds;
 use LessValueObject\Number\Exception\PrecisionOutBounds;
@@ -134,9 +135,11 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     private function getIdentityFromRequest(ServerRequestInterface $request): ?string
     {
         $identity = $request->getAttribute('identity');
-        assert($identity === null || is_string($identity));
+        assert($identity === null || $identity instanceof ForeignReference);
 
-        return $identity;
+        return $identity instanceof ForeignReference
+            ? (string)$identity
+            : null;
     }
 
     private function getStartTimeFromRequest(ServerRequestInterface $request): int

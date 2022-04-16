@@ -8,6 +8,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
 use LessDatabase\Query\Builder\Helper\LabelHelper;
 use LessHttp\Middleware\Analytics\AnalyticsMiddleware;
+use LessValueObject\Composite\ForeignReference;
 use LessValueObject\Number\Int\Date\MilliTimestamp;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\TestCase;
@@ -86,7 +87,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 [LabelHelper::fromValue('fiz'), 'fiz'],
                 [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
                 [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
                 [LabelHelper::fromValue('local'), 'local'],
                 [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
@@ -102,7 +103,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 ['service', ':' . LabelHelper::fromValue('fiz')],
                 ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                 ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
                 ['user_agent', ':' . LabelHelper::fromValue('local')],
                 ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
@@ -159,7 +160,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->method('getAttribute')
             ->willReturnMap(
                 [
-                    ['identity', null, 'abc/def'],
+                    ['identity', null, ForeignReference::fromString('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                     ['claims', null, ['rol' => 'foo']],
                 ],
             );
@@ -200,7 +201,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 [LabelHelper::fromValue('fiz'), 'fiz'],
                 [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
                 [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
                 [LabelHelper::fromValue('local'), 'local'],
                 [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
@@ -216,7 +217,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 ['service', ':' . LabelHelper::fromValue('fiz')],
                 ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                 ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
                 ['user_agent', ':' . LabelHelper::fromValue('local')],
                 ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
@@ -273,7 +274,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->method('getAttribute')
             ->willReturnMap(
                 [
-                    ['identity', null, 'abc/def'],
+                    ['identity', null, ForeignReference::fromString('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                     ['claims', null, ['rol' => 'foo']],
                 ],
             );
@@ -328,7 +329,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 [LabelHelper::fromValue('fiz'), 'fiz'],
                 [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
                 [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
                 [LabelHelper::fromValue('local'), 'local'],
                 [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
@@ -344,7 +345,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 ['service', ':' . LabelHelper::fromValue('fiz')],
                 ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                 ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
                 ['user_agent', ':' . LabelHelper::fromValue('local')],
                 ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
@@ -401,7 +402,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->method('getAttribute')
             ->willReturnMap(
                 [
-                    ['identity', null, 'abc/def'],
+                    ['identity', null, ForeignReference::fromString('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                     ['claims', null, null],
                 ],
             );
@@ -461,7 +462,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 [LabelHelper::fromValue('fiz'), 'fiz'],
                 [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/def'), 'abc/def'],
+                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
                 [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
                 [LabelHelper::fromValue('local'), 'local'],
                 [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
@@ -480,7 +481,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->withConsecutive(
                 ['service', ':' . LabelHelper::fromValue('fiz')],
                 ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/def')],
+                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                 ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
                 ['user_agent', ':' . LabelHelper::fromValue('local')],
                 ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
@@ -537,7 +538,7 @@ final class AnalyticsMiddlewareTest extends TestCase
             ->method('getAttribute')
             ->willReturnMap(
                 [
-                    ['identity', null, 'abc/def'],
+                    ['identity', null, ForeignReference::fromString('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
                     ['claims', null, null],
                 ],
             );
