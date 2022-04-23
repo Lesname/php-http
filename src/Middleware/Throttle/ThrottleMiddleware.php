@@ -129,6 +129,10 @@ SQL;
      */
     private function logRequest(ServerRequestInterface $request, ?ResponseInterface $response = null): void
     {
+        if (strtolower($request->getMethod()) === 'options') {
+            return;
+        }
+
         $builder = $this->connection->createQueryBuilder();
         InsertValuesApplier
             ::forValues(
