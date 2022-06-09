@@ -46,16 +46,20 @@ final class PrerequisiteMiddlewareFactory
      * @psalm-suppress MixedInferredReturnType
      * @psalm-suppress MixedReturnTypeCoercion
      * @psalm-suppress MixedReturnStatement
+     * @psalm-suppress MixedAssignment
      */
     private function parsePrerequisites(array $routes): array
     {
-        return array_map(
-            static fn(array $route): array => $route[self::ROUTE_KEY],
-            array_filter(
-                $routes,
-                static fn(array $route): bool => isset($route[self::ROUTE_KEY])
-                    && $route[self::ROUTE_KEY],
-            ),
-        );
+        $prerequisites = [];
+
+        foreach ($routes as $key => $route) {
+            assert(is_array($route));
+
+            if (isset($route[self::ROUTE_KEY])) {
+                $prerequisites[$key] = $route[self::ROUTE_KEY];
+            }
+        }
+
+        return $prerequisites;
     }
 }
