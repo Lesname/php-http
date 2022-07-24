@@ -9,6 +9,9 @@ use LessToken\Codec\TokenCodecHelper;
 
 final class JwtAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {
+    /**
+     * @param array<mixed> $config
+     */
     public function build(array $config): AuthenticationAdapter
     {
         assert(is_array($config['codec']));

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LessHttp\Middleware\Authentication\Adapter;
 
-use LessToken\Codec\JwtTokenCodec;
+use LessToken\Codec\TokenCodec;
 use LessValueObject\Composite\Exception\CannotParseReference;
 use LessValueObject\Composite\ForeignReference;
 use LessValueObject\String\Exception\TooLong;
@@ -18,7 +18,7 @@ final class JwtAuthenticationAdapter implements AuthenticationAdapter
 /^Bearer ([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)$/
 REGEXP;
 
-    public function __construct(private readonly JwtTokenCodec $codec)
+    public function __construct(private readonly TokenCodec $codec)
     {}
 
     /**
@@ -38,16 +38,20 @@ REGEXP;
                 return null;
             }
 
-            if (isset($claims->identity)) {
-                assert(is_string($claims->identity));
-
-                return ForeignReference::fromString($claims->identity);
+            if (!is_array($claims)) {
+                return null;
             }
 
-            if (isset($claims->sub)) {
-                assert(is_string($claims->sub));
+            if (isset($claims['identity'])) {
+                assert(is_string($claims['identity']));
 
-                return ForeignReference::fromString($claims->sub);
+                return ForeignReference::fromString($claims['identity']);
+            }
+
+            if (isset($claims['sub'])) {
+                assert(is_string($claims['sub']));
+
+                return ForeignReference::fromString($claims['sub']);
             }
         }
 

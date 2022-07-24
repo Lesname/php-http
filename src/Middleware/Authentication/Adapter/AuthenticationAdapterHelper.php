@@ -7,6 +7,9 @@ use LessHttp\Middleware\Authentication\Adapter\Builder\AuthenticationAdapterBuil
 
 final class AuthenticationAdapterHelper
 {
+    /**
+     * @param array<mixed> $config
+     */
     public static function fromConfig(array $config): AuthenticationAdapter
     {
         assert(is_string($config['builder']));
