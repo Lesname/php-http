@@ -9,6 +9,8 @@ use LessToken\Codec\TokenCodecHelper;
 
 /**
  * @deprecated use BearerAuthenticationAdapter
+ *
+ * @psalm-suppress DeprecatedClass
  */
 final class JwtAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {
