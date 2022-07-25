@@ -36,7 +36,7 @@ final class AuthenticationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new AuthenticationMiddleware($adapter);
+        $middleware = new AuthenticationMiddleware([$adapter]);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -68,7 +68,7 @@ final class AuthenticationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new AuthenticationMiddleware($adapter);
+        $middleware = new AuthenticationMiddleware([$adapter]);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
