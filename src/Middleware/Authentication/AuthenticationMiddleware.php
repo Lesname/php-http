@@ -14,9 +14,8 @@ final class AuthenticationMiddleware implements MiddlewareInterface
     /**
      * @param array<AuthenticationAdapter> $adapters
      */
-    public function __construct(
-        private readonly array $adapters,
-    ) {}
+    public function __construct(private readonly array $adapters)
+    {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

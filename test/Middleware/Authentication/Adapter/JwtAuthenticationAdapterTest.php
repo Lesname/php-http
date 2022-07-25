@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace LessHttpTest\Middleware\Authentication\Adapter;
 
 use LessHttp\Middleware\Authentication\Adapter\JwtAuthenticationAdapter;
+use LessToken\Codec\JwtTokenCodec;
+use LessToken\Signer\HmacSigner;
+use LessToken\Signer\Key\FileKey;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -21,12 +24,12 @@ final class JwtAuthenticationAdapterTest extends TestCase
             ->willReturn('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImZpeiJ9.eyJzdWIiOiJmb28vMzhmMDY3MjItMWM3Mi00Y2VlLWIyMjUtYzBlODhhMDQzZTcyIn0.j2UdhnJvo8uI8d4_uUC72Wl10Vj6qXe_nTmV1a3TPCM');
 
         $adapter = new JwtAuthenticationAdapter(
-            [
-                'fiz' => [
-                    'keyMaterial' => __DIR__ . '/keyMaterial.stub',
-                    'algorithm' => 'HS256',
-                ],
-            ],
+            new JwtTokenCodec(
+                new HmacSigner(
+                    new FileKey(__DIR__ . '/keyMaterial.stub'),
+                    'sha256',
+                ),
+            ),
         );
 
         $result = $adapter->resolve($request);
@@ -44,28 +47,12 @@ final class JwtAuthenticationAdapterTest extends TestCase
             ->willReturn('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImZpeiJ9.j2UdhnJvo8uI8d4_uUC72Wl10Vj6qXe_nTmV1a3TPCM');
 
         $adapter = new JwtAuthenticationAdapter(
-            [
-                'fiz' => [
-                    'keyMaterial' => __DIR__ . '/keyMaterial.stub',
-                    'algorithm' => 'HS256',
-                ],
-            ],
-        );
-
-        self::assertNull($adapter->resolve($request));
-    }
-
-
-    public function testTokenFailure(): void
-    {
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request
-            ->method('getHeaderLine')
-            ->with('authorization')
-            ->willReturn('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImZpeiJ9.eyJzdWIiOiJmb28vMzhmMDY3MjItMWM3Mi00Y2VlLWIyMjUtYzBlODhhMDQzZTcyIn0.j2UdhnJvo8uI8d4_uUC72Wl10Vj6qXe_nTmV1a3TPCM');
-
-        $adapter = new JwtAuthenticationAdapter(
-            [],
+            new JwtTokenCodec(
+                new HmacSigner(
+                    new FileKey(__DIR__ . '/keyMaterial.stub'),
+                    'sha256',
+                ),
+            ),
         );
 
         self::assertNull($adapter->resolve($request));
