@@ -12,13 +12,10 @@ use LessValueObject\String\Format\Exception\NotFormat;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-/**
- * @deprecated use BearerAuthenticationAdapter
- */
-final class JwtAuthenticationAdapter implements AuthenticationAdapter
+final class BearerAuthenticationAdapter implements AuthenticationAdapter
 {
     private const AUTHORIZATION_REGEXP = <<<'REGEXP'
-/^Bearer ([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)$/
+/^Bearer (.+)$/
 REGEXP;
 
     public function __construct(private readonly TokenCodec $codec)
@@ -49,12 +46,6 @@ REGEXP;
                 assert(is_string($claims['identity']));
 
                 return ForeignReference::fromString($claims['identity']);
-            }
-
-            if (isset($claims['sub'])) {
-                assert(is_string($claims['sub']));
-
-                return ForeignReference::fromString($claims['sub']);
             }
         }
 
