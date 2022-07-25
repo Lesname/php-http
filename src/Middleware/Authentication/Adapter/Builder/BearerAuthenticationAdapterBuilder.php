@@ -4,13 +4,10 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Authentication\Adapter\Builder;
 
 use LessHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
-use LessHttp\Middleware\Authentication\Adapter\JwtAuthenticationAdapter;
+use LessHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
 use LessToken\Codec\TokenCodecHelper;
 
-/**
- * @deprecated use BearerAuthenticationAdapter
- */
-final class JwtAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
+final class BearerAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {
     /**
      * @param array<mixed> $config
@@ -19,7 +16,7 @@ final class JwtAuthenticationAdapterBuilder implements AuthenticationAdapterBuil
     {
         assert(is_array($config['codec']));
 
-        return new JwtAuthenticationAdapter(
+        return new BearerAuthenticationAdapter(
             TokenCodecHelper::fromConfig($config['codec']),
         );
     }
