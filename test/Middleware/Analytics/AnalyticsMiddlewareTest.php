@@ -456,6 +456,14 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $e = new Exception('Fiz biz');
 
+        $error = json_encode(
+            [
+                'throwable' => $e->getMessage(),
+                'class' => get_debug_type($e),
+            ],
+            JSON_THROW_ON_ERROR,
+        );
+
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
@@ -469,8 +477,8 @@ final class AnalyticsMiddlewareTest extends TestCase
                 [LabelHelper::fromValue(530_865), 530_865],
                 [LabelHelper::fromValue(500), 500],
                 [
-                    LabelHelper::fromValue('{"throwable":"Fiz biz"}'),
-                    '{"throwable":"Fiz biz"}',
+                    LabelHelper::fromValue($error),
+                    $error,
                 ],
             )
             ->willReturn($builder);
@@ -487,7 +495,7 @@ final class AnalyticsMiddlewareTest extends TestCase
                 ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
                 ['duration', ':' . LabelHelper::fromValue(530_865)],
                 ['response', ':' . LabelHelper::fromValue(500)],
-                ['error', ':' . LabelHelper::fromValue('{"throwable":"Fiz biz"}')],
+                ['error', ':' . LabelHelper::fromValue($error)],
             )
             ->willReturn($builder);
 
