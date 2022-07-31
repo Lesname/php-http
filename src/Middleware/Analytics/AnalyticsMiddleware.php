@@ -64,7 +64,13 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         $startTime = $this->getStartTimeFromRequest($request);
 
         if ($result instanceof Throwable) {
-            $error = json_encode(['throwable' => $result->getMessage()], JSON_THROW_ON_ERROR);
+            $error = json_encode(
+                [
+                    'throwable' => $result->getMessage(),
+                    'class' => get_debug_type($result),
+                ],
+                JSON_THROW_ON_ERROR,
+            );
             $response = 500;
         } else {
             $response = $result->getStatusCode();
