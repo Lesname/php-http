@@ -11,7 +11,7 @@
   "require": {
     "php": "^8.1.0",
 
-    "lessname/validator": "^0.1.6",
+    "lessname/validator": "^0.2.0",
     "lessname/cache": "^0.1.1",
     "lessname/database": "^0.1.0",
 
