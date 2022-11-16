@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
@@ -43,11 +44,20 @@ final class CorsMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('/fiz');
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request
             ->expects(self::once())
             ->method('getMethod')
             ->willReturn('OPTIONS');
+
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
 
         $request
             ->method('getHeaderLine')
@@ -61,10 +71,14 @@ final class CorsMiddlewareTest extends TestCase
 
         $middleware = new CorsMiddleware(
             $responseFactory,
-            ['https://foo.bar'],
-            ['post', 'get'],
-            ['foo', 'bar'],
-            123
+            [
+                'default' => [
+                    'origins' => ['https://foo.bar'],
+                    'methods' => ['post', 'get'],
+                    'headers' => ['foo', 'bar'],
+                    'maxAge' => 123,
+                ],
+            ],
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
@@ -89,11 +103,20 @@ final class CorsMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('createResponse');
 
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('/fiz');
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request
             ->expects(self::once())
             ->method('getMethod')
             ->willReturn('POST');
+
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
 
         $request
             ->method('getHeaderLine')
@@ -114,10 +137,20 @@ final class CorsMiddlewareTest extends TestCase
 
         $middleware = new CorsMiddleware(
             $responseFactory,
-            ['https://foo.bar'],
-            ['post', 'get'],
-            ['foo', 'bar'],
-            123
+            [
+                'default' => [
+                    'origins' => ['https://bar.foo'],
+                    'methods' => ['get'],
+                    'headers' => ['bar'],
+                    'maxAge' => 123,
+                ],
+                '/fiz' => [
+                    'origins' => ['https://foo.bar'],
+                    'methods' => ['post', 'get'],
+                    'headers' => ['foo', 'bar'],
+                    'maxAge' => 123,
+                ],
+            ],
         );
 
         self::assertSame($response, $middleware->process($request, $handler));

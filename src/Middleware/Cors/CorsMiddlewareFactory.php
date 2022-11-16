@@ -13,6 +13,8 @@ final class CorsMiddlewareFactory
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     *
+     * @psalm-suppress MixedArgumentTypeCoercion array not checked
      */
     public function __invoke(ContainerInterface $container): CorsMiddleware
     {
@@ -25,27 +27,13 @@ final class CorsMiddlewareFactory
         assert(is_array($config['cors']));
         $cors = $config['cors'];
 
-        assert(is_array($cors['origins']));
-        $origins = $cors['origins'];
-        /** @var array<string> $origins */
-
-        assert(is_array($cors['methods']));
-        $methods = $cors['methods'];
-        /** @var array<string> $methods */
-
-        assert(is_array($cors['headers']));
-        $headers = $cors['headers'];
-        /** @var array<string> $headers */
-
-        assert(is_int($config['cors']['maxAge']));
-        $maxAge = $config['cors']['maxAge'];
+        if (!isset($cors['default'])) {
+            $cors = ['default' => $cors];
+        }
 
         return new CorsMiddleware(
             $responseFactory,
-            $origins,
-            $methods,
-            $headers,
-            $maxAge,
+            $cors,
         );
     }
 }
