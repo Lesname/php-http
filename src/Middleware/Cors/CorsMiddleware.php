@@ -13,7 +13,7 @@ final class CorsMiddleware implements MiddlewareInterface
 {
     /**
      * @param ResponseFactoryInterface $responseFactory
-     * @param array<string, array{origins: array<string>, methods: array<string>, headers: array<string>, maxAge: int}> $settings
+     * @param array<string, array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int}> $settings
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
