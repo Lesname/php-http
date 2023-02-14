@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LessHttp\Middleware\Validation;
 
+use Psr\Log\LoggerInterface;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -32,6 +34,12 @@ final class ValidationMiddlewareFactory
         $streamFactory = $container->get(StreamFactoryInterface::class);
         assert($streamFactory instanceof StreamFactoryInterface);
 
+        $translator = $container->get(TranslatorInterface::class);
+        assert($translator instanceof TranslatorInterface);
+
+        $logger = $container->get(LoggerInterface::class);
+        assert($logger instanceof LoggerInterface);
+
         $cache = $container->get(CacheInterface::class);
         assert($cache instanceof CacheInterface);
 
@@ -46,7 +54,9 @@ final class ValidationMiddlewareFactory
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );
