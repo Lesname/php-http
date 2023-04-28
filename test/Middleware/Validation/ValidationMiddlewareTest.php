@@ -3,16 +3,13 @@ declare(strict_types=1);
 
 namespace LessHttpTest\Middleware\Validation;
 
-use LessDocumentor\Route\Document\RouteDocument;
+use Psr\Log\LoggerInterface;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessDocumentor\Route\RouteDocumentor;
 use LessDocumentor\Type\Document\TypeDocument;
+use LessValidator\ValidateResult\ErrorValidateResult;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use LessHttp\Middleware\Validation\ValidationMiddleware;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
-use LessValidator\ChainValidator;
-use LessValidator\Composite\PropertyKeysValidator;
-use LessValidator\Composite\PropertyValuesValidator;
-use LessValidator\TypeValidator;
 use LessValidator\ValidateResult\ValidateResult;
 use LessValidator\Validator;
 use PHPUnit\Framework\TestCase;
@@ -82,6 +79,10 @@ final class ValidationMiddlewareTest extends TestCase
 
         $container = $this->createMock(ContainerInterface::class);
 
+        $translator = $this->createMock(TranslatorInterface::class);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
         $cache = $this->createMock(CacheInterface::class);
         $cache
             ->expects(self::once())
@@ -96,7 +97,9 @@ final class ValidationMiddlewareTest extends TestCase
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );
@@ -144,10 +147,10 @@ final class ValidationMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $result = $this->createMock(ValidateResult::class);
-        $result
-            ->method('isValid')
-            ->willReturn(false);
+        $result = new ErrorValidateResult(
+            'fiz',
+            ['foo' => 'biz'],
+        );
 
         $validator = $this->createMock(Validator::class);
         $validator
@@ -173,7 +176,11 @@ final class ValidationMiddlewareTest extends TestCase
                     [
                         'message' => 'Invalid parameters provided',
                         'code' => 'invalidBody',
-                        'data' => $result,
+                        'data' => [
+                            'context' => ['foo' => 'biz'],
+                            'code' => 'fiz',
+                            'message' => 'bar',
+                        ],
                     ],
                     flags: JSON_THROW_ON_ERROR,
                 )
@@ -193,12 +200,27 @@ final class ValidationMiddlewareTest extends TestCase
 
         $routes = [];
 
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator
+            ->expects(self::once())
+            ->method('trans')
+            ->with('fiz', ['foo' => 'biz'], null, 'lor')
+            ->willReturn('bar');
+
+        $translator
+            ->method('getLocale')
+            ->willReturn('lor');
+
+        $logger = $this->createMock(LoggerInterface::class);
+
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );
@@ -254,12 +276,18 @@ final class ValidationMiddlewareTest extends TestCase
 
         $routes = [];
 
+        $translator = $this->createMock(TranslatorInterface::class);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );
@@ -341,12 +369,18 @@ final class ValidationMiddlewareTest extends TestCase
             ],
         ];
 
+        $translator = $this->createMock(TranslatorInterface::class);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );
@@ -439,12 +473,18 @@ final class ValidationMiddlewareTest extends TestCase
             ],
         ];
 
+        $translator = $this->createMock(TranslatorInterface::class);
+
+        $logger = $this->createMock(LoggerInterface::class);
+
         $middleware = new ValidationMiddleware(
             $validatorBuilder,
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );

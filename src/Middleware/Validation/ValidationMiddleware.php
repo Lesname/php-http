@@ -4,14 +4,12 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Validation;
 
 use JsonException;
+use Psr\Log\LoggerInterface;
+use LessValidator\ValidateResult;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessDocumentor\Type\Document\TypeDocument;
 use LessHttp\Response\ErrorResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use LessValidator\Builder\TypeDocumentValidatorBuilder;
-use LessValidator\ChainValidator;
-use LessValidator\Composite\PropertyKeysValidator;
-use LessValidator\Composite\PropertyValuesValidator;
-use LessValidator\TypeValidator;
 use LessValidator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -41,7 +39,9 @@ final class ValidationMiddleware implements MiddlewareInterface
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
+        private readonly TranslatorInterface $translator,
         private readonly ContainerInterface $container,
+        private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
         private readonly array $routes,
     ) {}
@@ -61,12 +61,14 @@ final class ValidationMiddleware implements MiddlewareInterface
             $result = $validator->validate($body);
 
             if (!$result->isValid()) {
+                $locale = $this->getPreferredLanguage($request);
+
                 $stream = $this->streamFactory->createStream(
                     json_encode(
                         new ErrorResponse(
                             'Invalid parameters provided',
                             'invalidBody',
-                            $result,
+                            $this->toData($result, $locale),
                         ),
                         flags: JSON_THROW_ON_ERROR,
                     ),
@@ -81,6 +83,63 @@ final class ValidationMiddleware implements MiddlewareInterface
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @psalm-suppress MixedAssignment
+     */
+    private function getPreferredLanguage(ServerRequestInterface $request): string
+    {
+        $useLocale = $request->getAttribute('useLocale');
+
+        return is_string($useLocale)
+            ? $useLocale
+            : $this->translator->getLocale();
+    }
+
+    private function toData(ValidateResult\ValidateResult $result, string $locale): mixed
+    {
+        if (
+            $result instanceof ValidateResult\Collection\SelfValidateResult
+            ||
+            $result instanceof ValidateResult\Composite\SelfValidateResult
+        ) {
+            return ['self' => $this->toData($result->self, $locale)];
+        }
+
+        if ($result instanceof ValidateResult\Collection\ItemsValidateResult) {
+            return [
+                'items' => array_map(
+                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    $result->items,
+                ),
+            ];
+        }
+
+        if ($result instanceof ValidateResult\Composite\PropertiesValidateResult) {
+            return [
+                'properties' => array_map(
+                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    $result->properties,
+                ),
+            ];
+        }
+
+        if ($result instanceof ValidateResult\ErrorValidateResult) {
+            $message = $this->translator->trans($result->code, $result->context, locale: $locale);
+
+            if ($message === $result->code) {
+                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
+            }
+
+            return [
+                'context' => $result->context,
+                'code' => $result->code,
+                'message' => $message,
+            ];
+        }
+
+        return $result;
     }
 
     /**

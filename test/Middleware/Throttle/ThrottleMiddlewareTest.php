@@ -368,6 +368,7 @@ final class ThrottleMiddlewareTest extends TestCase
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
+            ->with()
             ->withConsecutive(
                 ['identity = :identity'],
                 ['requested_on >= :since'],
