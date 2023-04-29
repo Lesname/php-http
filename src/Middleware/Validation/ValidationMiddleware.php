@@ -132,8 +132,14 @@ final class ValidationMiddleware implements MiddlewareInterface
                 $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
             }
 
+            $context = [];
+
+            foreach ($result->context as $key => $value) {
+                $context["%{$key}%"] = $value;
+            }
+
             return [
-                'context' => $result->context,
+                'context' => $context,
                 'code' => $result->code,
                 'message' => $message,
             ];
