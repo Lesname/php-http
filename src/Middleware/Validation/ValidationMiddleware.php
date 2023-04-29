@@ -126,12 +126,6 @@ final class ValidationMiddleware implements MiddlewareInterface
         }
 
         if ($result instanceof ValidateResult\ErrorValidateResult) {
-            $message = $this->translator->trans($result->code, $result->context, locale: $locale);
-
-            if ($message === $result->code) {
-                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
-            }
-
             $context = [];
 
             foreach ($result->context as $key => $value) {
@@ -140,8 +134,14 @@ final class ValidationMiddleware implements MiddlewareInterface
                     : $value;
             }
 
+            $message = $this->translator->trans($result->code, $context, locale: $locale);
+
+            if ($message === $result->code) {
+                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
+            }
+
             return [
-                'context' => $context,
+                'context' => $result->context,
                 'code' => $result->code,
                 'message' => $message,
             ];
