@@ -135,7 +135,9 @@ final class ValidationMiddleware implements MiddlewareInterface
             $context = [];
 
             foreach ($result->context as $key => $value) {
-                $context["%{$key}%"] = $value;
+                $context["%{$key}%"] = is_array($value)
+                    ? implode(', ', $value)
+                    : $value;
             }
 
             return [
