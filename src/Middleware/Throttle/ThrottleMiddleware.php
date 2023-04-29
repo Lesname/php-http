@@ -6,6 +6,7 @@ namespace LessHttp\Middleware\Throttle;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
+use LessHttp\Middleware\Throttle\Parameter\By;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LessHttp\Response\ErrorResponse;
 use LessValueObject\Composite\ForeignReference;
@@ -114,9 +115,9 @@ SQL;
 
             if (isset($limit['by'])) {
                 if (
-                    ($limit['by'] === 'identity' && $identity === null)
+                    ($limit['by'] === By::Identity && $identity === null)
                     ||
-                    ($limit['by'] === 'ip' && $identity !== null)
+                    ($limit['by'] === By::Ip && $identity !== null)
                 ) {
                     continue;
                 }
