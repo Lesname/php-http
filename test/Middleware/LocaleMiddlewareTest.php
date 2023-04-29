@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace LessHttpTest\Middleware;
 
-use LessHttp\Middleware\LocaleMiddleware;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use LessHttp\Middleware\Locale\LocaleMiddleware;
 
 /**
- * @covers \LessHttp\Middleware\LocaleMiddleware
+ * @covers \LessHttp\Middleware\Locale\LocaleMiddleware
  */
 class LocaleMiddlewareTest extends TestCase
 {
