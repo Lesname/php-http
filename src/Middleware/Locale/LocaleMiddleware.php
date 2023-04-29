@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware;
+namespace LessHttp\Middleware\Locale;
 
-use SplQueue;
 use SplPriorityQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
