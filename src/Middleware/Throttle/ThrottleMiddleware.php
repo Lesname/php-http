@@ -23,7 +23,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
     /**
      * @param ResponseFactoryInterface $responseFactory
      * @param Connection $connection
-     * @param array<array{duration: int, points: int, path?: string, by?: By}> $limits
+     * @param array<array{duration: int, points: int, action?: string, by?: By}> $limits
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
@@ -109,8 +109,16 @@ SQL;
         }
 
         foreach ($this->limits as $limit) {
-            if (isset($limit['path']) && $limit['path'] !== $request->getUri()->getPath()) {
-                continue;
+            $limitBuilder = clone $builder;
+
+            if (isset($limit['action'])) {
+                if ($limit['action'] !== $this->getActionFromRequest($request)) {
+                    continue;
+                }
+
+                $limitBuilder
+                    ->andWhere('action = :action')
+                    ->setParameter('action', $this->getActionFromRequest($request));
             }
 
             if (isset($limit['by'])) {
@@ -123,7 +131,6 @@ SQL;
                 }
             }
 
-            $limitBuilder = clone $builder;
             $points = $limitBuilder
                 ->andWhere('requested_on >= :since')
                 ->setParameter('since', $now - ($limit['duration'] * 1_000))
