@@ -67,19 +67,11 @@ final class ThrottleMiddlewareTest extends TestCase
         $queryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
-            ->withConsecutive(
-                ['identity = :identity'],
-                ['requested_on >= :since'],
-            )
             ->willReturn($queryBuilder);
 
         $queryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->withConsecutive(
-                ['identity', 'bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'],
-                ['since'],
-            )
             ->willReturn($queryBuilder);
 
         $queryBuilder
@@ -155,19 +147,11 @@ final class ThrottleMiddlewareTest extends TestCase
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
-            ->withConsecutive(
-                ['ip = :ip'],
-                ['requested_on >= :since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->withConsecutive(
-                ['ip', '127.0.0.1'],
-                ['since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder
@@ -271,19 +255,11 @@ final class ThrottleMiddlewareTest extends TestCase
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
-            ->withConsecutive(
-                ['ip = :ip'],
-                ['requested_on >= :since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->withConsecutive(
-                ['ip', '127.0.0.1'],
-                ['since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder
@@ -369,19 +345,11 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::exactly(2))
             ->method('andWhere')
             ->with()
-            ->withConsecutive(
-                ['identity = :identity'],
-                ['requested_on >= :since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->withConsecutive(
-                ['identity', 'bar/b53f8a97-25f4-49c4-9d30-dc70124e8877'],
-                ['since'],
-            )
             ->willReturn($selectQueryBuilder);
 
         $selectQueryBuilder

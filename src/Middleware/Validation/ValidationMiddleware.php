@@ -134,7 +134,7 @@ final class ValidationMiddleware implements MiddlewareInterface
                     : $value;
             }
 
-            $message = $this->translator->trans($result->code, $context, locale: $locale);
+            $message = $this->translator->trans("validation.{$result->code}", $context, locale: $locale);
 
             if ($message === $result->code) {
                 $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
