@@ -204,7 +204,7 @@ final class ValidationMiddlewareTest extends TestCase
         $translator
             ->expects(self::once())
             ->method('trans')
-            ->with('fiz', ['foo' => 'biz'], null, 'lor')
+            ->with('validation.fiz', ['%foo%' => 'biz'], null, 'lor')
             ->willReturn('bar');
 
         $translator

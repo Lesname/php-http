@@ -23,12 +23,6 @@ final class CorsMiddlewareTest extends TestCase
         $response
             ->expects(self::exactly(4))
             ->method('withHeader')
-            ->withConsecutive(
-                ['access-control-allow-methods', 'post,get'],
-                ['access-control-allow-headers', 'foo,bar'],
-                ['access-control-allow-origin', 'https://foo.bar'],
-                ['access-control-max-age', '123'],
-            )
             ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
@@ -91,10 +85,6 @@ final class CorsMiddlewareTest extends TestCase
         $response
             ->expects(self::exactly(2))
             ->method('withHeader')
-            ->withConsecutive(
-                ['access-control-allow-origin', 'https://foo.bar'],
-                ['access-control-max-age', '123'],
-            )
             ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);

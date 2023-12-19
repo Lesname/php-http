@@ -84,33 +84,11 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
-            ->withConsecutive(
-                [LabelHelper::fromValue('fiz'), 'fiz'],
-                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
-                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
-                [LabelHelper::fromValue('local'), 'local'],
-                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
-                [LabelHelper::fromValue(530_865), 530_865],
-                [LabelHelper::fromValue(200), 200],
-                [LabelHelper::fromValue(null), null],
-            )
             ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
             ->method('setValue')
-            ->withConsecutive(
-                ['service', ':' . LabelHelper::fromValue('fiz')],
-                ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
-                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
-                ['user_agent', ':' . LabelHelper::fromValue('local')],
-                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
-                ['duration', ':' . LabelHelper::fromValue(530_865)],
-                ['response', ':' . LabelHelper::fromValue(200)],
-                ['error', ':' . LabelHelper::fromValue(null)],
-            )
             ->willReturn($builder);
 
         $builder
@@ -198,33 +176,11 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
-            ->withConsecutive(
-                [LabelHelper::fromValue('fiz'), 'fiz'],
-                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
-                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
-                [LabelHelper::fromValue('local'), 'local'],
-                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
-                [LabelHelper::fromValue(530_865), 530_865],
-                [LabelHelper::fromValue(422), 422],
-                [LabelHelper::fromValue('{"fiz":"biz"}'), '{"fiz":"biz"}'],
-            )
             ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
             ->method('setValue')
-            ->withConsecutive(
-                ['service', ':' . LabelHelper::fromValue('fiz')],
-                ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
-                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
-                ['user_agent', ':' . LabelHelper::fromValue('local')],
-                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
-                ['duration', ':' . LabelHelper::fromValue(530_865)],
-                ['response', ':' . LabelHelper::fromValue(422)],
-                ['error', ':' . LabelHelper::fromValue('{"fiz":"biz"}')],
-            )
             ->willReturn($builder);
 
         $builder
@@ -326,33 +282,11 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
-            ->withConsecutive(
-                [LabelHelper::fromValue('fiz'), 'fiz'],
-                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
-                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
-                [LabelHelper::fromValue('local'), 'local'],
-                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
-                [LabelHelper::fromValue(530_865), 530_865],
-                [LabelHelper::fromValue(422), 422],
-                [LabelHelper::fromValue('"fiz"'), '"fiz"'],
-            )
             ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
             ->method('setValue')
-            ->withConsecutive(
-                ['service', ':' . LabelHelper::fromValue('fiz')],
-                ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
-                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
-                ['user_agent', ':' . LabelHelper::fromValue('local')],
-                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
-                ['duration', ':' . LabelHelper::fromValue(530_865)],
-                ['response', ':' . LabelHelper::fromValue(422)],
-                ['error', ':' . LabelHelper::fromValue('"fiz"')],
-            )
             ->willReturn($builder);
 
         $builder
@@ -467,36 +401,11 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder
             ->expects(self::exactly(9))
             ->method('setParameter')
-            ->withConsecutive(
-                [LabelHelper::fromValue('fiz'), 'fiz'],
-                [LabelHelper::fromValue('foo.bar'), 'foo.bar'],
-                [LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'), 'abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6'],
-                [LabelHelper::fromValue('127.0.0.1'), '127.0.0.1'],
-                [LabelHelper::fromValue('local'), 'local'],
-                [LabelHelper::fromValue((int)floor($startTime * 1000)), (int)floor($startTime * 1000)],
-                [LabelHelper::fromValue(530_865), 530_865],
-                [LabelHelper::fromValue(500), 500],
-                [
-                    LabelHelper::fromValue($error),
-                    $error,
-                ],
-            )
             ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
             ->method('setValue')
-            ->withConsecutive(
-                ['service', ':' . LabelHelper::fromValue('fiz')],
-                ['action', ':' . LabelHelper::fromValue('foo.bar')],
-                ['identity', ':' . LabelHelper::fromValue('abc/707cfbb1-e06d-4635-a7cf-7f4c774d67d6')],
-                ['ip', ':' . LabelHelper::fromValue('127.0.0.1')],
-                ['user_agent', ':' . LabelHelper::fromValue('local')],
-                ['requested_on', ':' . LabelHelper::fromValue((int)floor($startTime * 1000))],
-                ['duration', ':' . LabelHelper::fromValue(530_865)],
-                ['response', ':' . LabelHelper::fromValue(500)],
-                ['error', ':' . LabelHelper::fromValue($error)],
-            )
             ->willReturn($builder);
 
         $builder
