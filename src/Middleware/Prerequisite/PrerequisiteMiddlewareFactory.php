@@ -16,6 +16,8 @@ final class PrerequisiteMiddlewareFactory
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     *
+     * @psalm-suppress DeprecatedClass
      */
     public function __invoke(ContainerInterface $container): PrerequisiteMiddleware
     {
