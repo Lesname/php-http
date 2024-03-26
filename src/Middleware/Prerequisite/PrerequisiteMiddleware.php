@@ -16,6 +16,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 
+/**
+ * @deprecated use ConditionMiddleware
+ */
 final class PrerequisiteMiddleware implements MiddlewareInterface
 {
     /**
