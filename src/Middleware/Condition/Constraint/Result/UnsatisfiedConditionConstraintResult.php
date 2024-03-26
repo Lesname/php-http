@@ -22,7 +22,7 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
     }
 
     /**
-     * @return array<string, string | int | float>
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
