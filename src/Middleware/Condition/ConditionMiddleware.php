@@ -19,15 +19,17 @@ use LessHttp\Middleware\Condition\Constraint\Result\UnsatisfiedConditionConstrai
 
 final class ConditionMiddleware implements MiddlewareInterface
 {
-    public const ROUTE_OPTIONS_KEY = 'conditions';
-
     /** @var Closure(string $key): ConditionConstraint */
     private Closure $conditionContainer;
 
+    /**
+     * @param array<string, array<string>> $conditions
+     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly TranslatorInterface $translator,
+        private readonly array $conditions,
         ContainerInterface $container,
     ) {
         $this->conditionContainer = static function (string $key) use ($container): ConditionConstraint {
@@ -43,52 +45,36 @@ final class ConditionMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $options = $request->getAttribute('routeOptions');
+        $method = $request->getMethod();
+        $path = $request->getUri()->getPath();
+        $key = "{$method}:{$path}";
 
-        if ($options === null) {
-            return $handler->handle($request);
-        }
+        if (isset($this->conditions[$key])) {
+            foreach ($this->conditions[$key] as $conditionKey) {
+                $result = ($this->conditionContainer)($conditionKey)->satisfies($request);
 
-        assert(is_array($options));
+                if (!$result->isSatisfied()) {
+                    $locale = $this->getUseLocale($request);
 
-        foreach ($this->getConditionsForRoute($options) as $condition) {
-            $result = $condition->satisfies($request);
+                    $json = json_encode(
+                        [
+                            'message' => $this->translator->trans('condition.notSatisfied'),
+                            'code' => 'conditionNotSatisfied',
+                            'data' => $this->translate($result, $locale),
+                        ],
+                        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
+                    );
 
-            if (!$result->isSatisfied()) {
-                $locale = $this->getUseLocale($request);
-
-                $json = json_encode(
-                    [
-                        'message' => "Condition not met for request",
-                        'code' => 'conditionNotSatisfied',
-                        'data' => $this->translate($result, $locale),
-                    ],
-                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
-                );
-
-                return $this
-                    ->responseFactory
-                    ->createResponse(409)
-                    ->withHeader('content-type', 'application/json')
-                    ->withBody($this->streamFactory->createStream($json));
+                    return $this
+                        ->responseFactory
+                        ->createResponse(409)
+                        ->withHeader('content-type', 'application/json')
+                        ->withBody($this->streamFactory->createStream($json));
+                }
             }
         }
 
         return $handler->handle($request);
-    }
-
-    /**
-     * @param array<mixed> $options
-     *
-     * @return iterable<ConditionConstraint>
-     */
-    private function getConditionsForRoute(array $options): iterable
-    {
-        foreach ($options[self::ROUTE_OPTIONS_KEY] ?? [] as $condition) {
-            assert(is_string($condition));
-
-            yield ($this->conditionContainer)($condition);
-        }
     }
 
     private function translate(ConditionConstraintResult $result, string $locale): mixed
