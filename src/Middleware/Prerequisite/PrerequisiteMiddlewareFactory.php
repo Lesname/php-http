@@ -9,6 +9,9 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
+/**
+ * @deprecated
+ */
 final class PrerequisiteMiddlewareFactory
 {
     public const ROUTE_KEY = 'prerequisites';
