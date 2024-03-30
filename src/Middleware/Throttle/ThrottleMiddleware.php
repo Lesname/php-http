@@ -126,6 +126,8 @@ SQL;
                     ($limit['by'] === By::Identity && $identity === null)
                     ||
                     ($limit['by'] === By::Ip && $identity !== null)
+                    ||
+                    ($limit['by'] === By::Guest && $identity !== null)
                 ) {
                     continue;
                 }
