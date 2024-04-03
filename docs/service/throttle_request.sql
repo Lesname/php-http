@@ -9,5 +9,6 @@ CREATE TABLE IF NOT EXISTS throttle_request (
 
     response SMALLINT NOT NULL,
 
-    INDEX (action, identity, ip, requested_on)
+    INDEX (action, identity, ip, requested_on),
+    INDEX (requested_on)
 );

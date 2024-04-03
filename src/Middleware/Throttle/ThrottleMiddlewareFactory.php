@@ -36,6 +36,15 @@ final class ThrottleMiddlewareFactory
         $limits = $settings['limits'];
         /** @var array<array{duration: int, points: int}> $limits */
 
-        return new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
+        $usageModifier = $settings['usageModifier'] ?? 25;
+        assert(is_int($usageModifier));
+
+        return new ThrottleMiddleware(
+            $responseFactory,
+            $streamFactory,
+            $connection,
+            $limits,
+            $usageModifier,
+        );
     }
 }
