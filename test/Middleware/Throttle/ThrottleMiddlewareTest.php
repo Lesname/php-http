@@ -116,7 +116,7 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
-        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits, 30);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -132,32 +132,35 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('createResponse');
 
-        $selectQueryBuilder = $this->createMock(QueryBuilder::class);
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('select')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('from')
             ->with('throttle_request')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('fetchOne')
             ->willReturn('123');
+
+        $selectUsageQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectUsageQueryBuilder->expects(self::exactly(2))->method('fetchOne')->willReturnOnConsecutiveCalls(100, 1);
 
         $insertQueryBuilder = $this->createMock(QueryBuilder::class);
         $insertQueryBuilder
@@ -183,9 +186,13 @@ final class ThrottleMiddlewareTest extends TestCase
 
         $connection = $this->createMock(Connection::class);
         $connection
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls($selectQueryBuilder, $insertQueryBuilder);
+            ->willReturnOnConsecutiveCalls(
+                $selectLimitsQueryBuilder,
+                $selectUsageQueryBuilder,
+                $insertQueryBuilder,
+            );
 
         $limits = [
             [
@@ -224,12 +231,12 @@ final class ThrottleMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits, 30);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
 
-    public function testOptionsNotLogged(): void
+    public function testOptionsRequestNotLogged(): void
     {
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
@@ -240,38 +247,41 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('createResponse');
 
-        $selectQueryBuilder = $this->createMock(QueryBuilder::class);
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('select')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('from')
             ->with('throttle_request')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('fetchOne')
             ->willReturn('123');
 
+        $selectUsageQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectUsageQueryBuilder->expects(self::exactly(2))->method('fetchOne')->willReturnOnConsecutiveCalls(100, 1);
+
         $connection = $this->createMock(Connection::class);
         $connection
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls($selectQueryBuilder);
+            ->willReturnOnConsecutiveCalls($selectLimitsQueryBuilder, $selectUsageQueryBuilder);
 
         $limits = [
             [
@@ -310,7 +320,7 @@ final class ThrottleMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits, 30);
 
         self::assertSame($response, $middleware->process($request, $handler));
     }
@@ -329,33 +339,36 @@ final class ThrottleMiddlewareTest extends TestCase
             ->expects(self::never())
             ->method('createResponse');
 
-        $selectQueryBuilder = $this->createMock(QueryBuilder::class);
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('select')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('from')
             ->with('throttle_request')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('andWhere')
             ->with()
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::exactly(2))
             ->method('setParameter')
-            ->willReturn($selectQueryBuilder);
+            ->willReturn($selectLimitsQueryBuilder);
 
-        $selectQueryBuilder
+        $selectLimitsQueryBuilder
             ->expects(self::once())
             ->method('fetchOne')
             ->willReturn('123');
+
+        $selectUsageQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectUsageQueryBuilder->expects(self::exactly(2))->method('fetchOne')->willReturnOnConsecutiveCalls(100, 1);
 
         $insertQueryBuilder = $this->createMock(QueryBuilder::class);
         $insertQueryBuilder
@@ -381,9 +394,9 @@ final class ThrottleMiddlewareTest extends TestCase
 
         $connection = $this->createMock(Connection::class);
         $connection
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('createQueryBuilder')
-            ->willReturnOnConsecutiveCalls($selectQueryBuilder, $insertQueryBuilder);
+            ->willReturnOnConsecutiveCalls($selectLimitsQueryBuilder, $selectUsageQueryBuilder, $insertQueryBuilder);
 
         $limits = [
             [
@@ -422,7 +435,7 @@ final class ThrottleMiddlewareTest extends TestCase
             ->with($request)
             ->willThrowException($e);
 
-        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits);
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits, 30);
         $middleware->process($request, $handler);
     }
 }
