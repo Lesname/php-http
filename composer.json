@@ -11,6 +11,8 @@
   "require": {
     "php": "^8.2.0",
 
+    "ext-intl": "*",
+
     "lessname/validator": "^0.3.0",
     "lessname/cache": "^0.2.0",
     "lessname/database": "^0.2.0",
