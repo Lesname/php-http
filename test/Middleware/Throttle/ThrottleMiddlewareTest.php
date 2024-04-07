@@ -23,7 +23,7 @@ use Throwable;
  */
 final class ThrottleMiddlewareTest extends TestCase
 {
-    public function testIsThrottled(): void
+    public function testIsThrottledByLimits(): void
     {
         $stream = $this->createMock(StreamInterface::class);
 
@@ -110,6 +110,114 @@ final class ThrottleMiddlewareTest extends TestCase
         $request
             ->method('getServerParams')
             ->willReturn(['REMOTE_ADDR' => '127.0.0.1']);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects(self::never())
+            ->method('handle');
+
+        $middleware = new ThrottleMiddleware($responseFactory, $streamFactory, $connection, $limits, 30);
+
+        self::assertSame($response, $middleware->process($request, $handler));
+    }
+
+    public function testIsThrottledByUsage(): void
+    {
+        $stream = $this->createMock(StreamInterface::class);
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory
+            ->expects(self::once())
+            ->method('createStream')
+            ->willReturn($stream);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->expects(self::once())
+            ->method('withBody')
+            ->with($stream)
+            ->willReturn($response);
+        $response
+            ->expects(self::once())
+            ->method('withAddedHeader')
+            ->with('content-type', 'application/json')
+            ->willReturn($response);
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $responseFactory
+            ->expects(self::once())
+            ->method('createResponse')
+            ->with(429)
+            ->willReturn($response);
+
+        $selectLimitsQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectLimitsQueryBuilder
+            ->expects(self::once())
+            ->method('select')
+            ->willReturn($selectLimitsQueryBuilder);
+
+        $selectLimitsQueryBuilder
+            ->expects(self::once())
+            ->method('from')
+            ->with('throttle_request')
+            ->willReturn($selectLimitsQueryBuilder);
+
+        $selectLimitsQueryBuilder
+            ->expects(self::exactly(2))
+            ->method('andWhere')
+            ->willReturn($selectLimitsQueryBuilder);
+
+        $selectLimitsQueryBuilder
+            ->expects(self::exactly(2))
+            ->method('setParameter')
+            ->willReturn($selectLimitsQueryBuilder);
+
+        $selectLimitsQueryBuilder
+            ->expects(self::once())
+            ->method('fetchOne')
+            ->willReturn('123');
+
+        $selectUsageQueryBuilder = $this->createMock(QueryBuilder::class);
+        $selectUsageQueryBuilder->expects(self::exactly(2))->method('fetchOne')->willReturnOnConsecutiveCalls(100, 100);
+
+        $connection = $this->createMock(Connection::class);
+        $connection
+            ->expects(self::exactly(2))
+            ->method('createQueryBuilder')
+            ->willReturnOnConsecutiveCalls(
+                $selectLimitsQueryBuilder,
+                $selectUsageQueryBuilder,
+            );
+
+        $limits = [
+            [
+                'duration' => 999_999,
+                'points' => 321,
+            ],
+        ];
+
+        $uri = $this->createMock(UriInterface::class);
+        $uri
+            ->method('getPath')
+            ->willReturn('bar');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $request
+            ->method('getAttribute')
+            ->with('identity')
+            ->willReturn(null);
+
+        $request
+            ->method('getServerParams')
+            ->willReturn(['REMOTE_ADDR' => '127.0.0.1']);
+
+        $request
+            ->method('getMethod')
+            ->willReturn('POST');
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
