@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Validation;
 
 use JsonException;
+use NumberFormatter;
 use Psr\Log\LoggerInterface;
 use LessValidator\ValidateResult;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
@@ -128,10 +129,14 @@ final class ValidationMiddleware implements MiddlewareInterface
         if ($result instanceof ValidateResult\ErrorValidateResult) {
             $context = [];
 
+            $numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
             foreach ($result->context as $key => $value) {
-                $context["%{$key}%"] = is_array($value)
-                    ? implode(', ', $value)
-                    : $value;
+                $context["%{$key}%"] = match (true) {
+                    is_int($value), is_float($value) => $numberFormatter->format($value),
+                    is_array($value) => implode(', ', $value),
+                    default => $value,
+                };
             }
 
             $message = $this->translator->trans("validation.{$result->code}", $context, locale: $locale);
