@@ -7,10 +7,10 @@ use JsonException;
 use NumberFormatter;
 use Psr\Log\LoggerInterface;
 use LessValidator\ValidateResult;
+use LessValidator\Builder\GenericValidatorBuilder;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
 use LessHttp\Response\ErrorResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LessValidator\Builder\TypeDocumentValidatorBuilder;
 use LessValidator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -27,7 +27,6 @@ use Psr\SimpleCache\InvalidArgumentException;
 final class ValidationMiddleware implements MiddlewareInterface
 {
     /**
-     * @param TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder
      * @param RouteInputDocumentor $routeInputDocumentor
      * @param ResponseFactoryInterface $responseFactory
      * @param StreamFactoryInterface $streamFactory
@@ -36,7 +35,6 @@ final class ValidationMiddleware implements MiddlewareInterface
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
-        private readonly TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder,
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
@@ -204,9 +202,9 @@ final class ValidationMiddleware implements MiddlewareInterface
 
         $document = $this->routeInputDocumentor->document($routeSettings);
 
-        return $this
-            ->typeDocumentValidatorBuilder
-            ->fromTypeDocument($document);
+        return (new GenericValidatorBuilder())
+            ->withTypeDocument($document)
+            ->build();
     }
 
     /**
