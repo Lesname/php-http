@@ -12,7 +12,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ConditionMiddlewareFactory
 {
-    public const ROUTE_KEY = 'conditions';
+    public const string ROUTE_KEY = 'conditions';
 
     /**
      * @throws ContainerExceptionInterface
