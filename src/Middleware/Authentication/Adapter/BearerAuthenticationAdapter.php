@@ -14,7 +14,7 @@ use Throwable;
 
 final class BearerAuthenticationAdapter implements AuthenticationAdapter
 {
-    private const AUTHORIZATION_REGEXP = <<<'REGEXP'
+    private const string AUTHORIZATION_REGEXP = <<<'REGEXP'
 /^Bearer (.+)$/
 REGEXP;
 

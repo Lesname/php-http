@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 final class AuthorizationMiddlewareFactory
 {
-    public const ROUTE_KEY = 'authorizations';
+    public const string ROUTE_KEY = 'authorizations';
 
     /**
      * @throws ContainerExceptionInterface
