@@ -10,7 +10,6 @@ use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LessValueObject\Composite\ForeignReference;
 use LessValueObject\Number\Exception\MaxOutBounds;
 use LessValueObject\Number\Exception\MinOutBounds;
-use LessValueObject\Number\Exception\PrecisionOutBounds;
 use LessValueObject\Number\Int\Date\MilliTimestamp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,7 +27,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
 
     /**
      * @throws MinOutBounds
-     * @throws PrecisionOutBounds
      * @throws Exception
      * @throws JsonException
      * @throws MaxOutBounds
@@ -55,7 +53,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
     /**
      * @throws MaxOutBounds
      * @throws MinOutBounds
-     * @throws PrecisionOutBounds
      * @throws Exception
      * @throws JsonException
      */

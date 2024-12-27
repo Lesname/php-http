@@ -30,6 +30,7 @@ final class AnalyticsMiddlewareFactory
         assert(is_array($config['databases']['analytics']));
 
         return new AnalyticsMiddleware(
+            // @phpstan-ignore argument.type
             DriverManager::getConnection($config['databases']['analytics']),
             $config['self']['name'],
         );

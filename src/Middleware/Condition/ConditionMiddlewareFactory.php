@@ -1,23 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Prerequisite;
+namespace LessHttp\Middleware\Condition;
 
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class PrerequisiteMiddlewareFactory
+final class ConditionMiddlewareFactory
 {
-    public const ROUTE_KEY = 'prerequisites';
+    public const string ROUTE_KEY = 'conditions';
 
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): PrerequisiteMiddleware
+    public function __invoke(ContainerInterface $container): ConditionMiddleware
     {
         $responseFactory = $container->get(ResponseFactoryInterface::class);
         assert($responseFactory instanceof ResponseFactoryInterface);
@@ -25,16 +26,20 @@ final class PrerequisiteMiddlewareFactory
         $streamFactory = $container->get(StreamFactoryInterface::class);
         assert($streamFactory instanceof StreamFactoryInterface);
 
+        $transltor = $container->get(TranslatorInterface::class);
+        assert($transltor instanceof TranslatorInterface);
+
         $config = $container->get('config');
         assert(is_array($config));
 
         assert(is_array($config['routes']));
 
-        return new PrerequisiteMiddleware(
+        return new ConditionMiddleware(
             $responseFactory,
             $streamFactory,
+            $transltor,
+            $this->parseConditions($config['routes']),
             $container,
-            $this->parsePrerequisites($config['routes']),
         );
     }
 
@@ -43,23 +48,21 @@ final class PrerequisiteMiddlewareFactory
      *
      * @return array<string, array<string>>
      *
-     * @psalm-suppress MixedInferredReturnType
      * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-suppress MixedReturnStatement
-     * @psalm-suppress MixedAssignment
      */
-    private function parsePrerequisites(array $routes): array
+    private function parseConditions(array $routes): array
     {
         $prerequisites = [];
 
         foreach ($routes as $key => $route) {
             assert(is_array($route));
 
-            if (isset($route[self::ROUTE_KEY])) {
+            if (isset($route[self::ROUTE_KEY]) && is_array($route[self::ROUTE_KEY])) {
                 $prerequisites[$key] = $route[self::ROUTE_KEY];
             }
         }
 
+        // @phpstan-ignore return.type
         return $prerequisites;
     }
 }

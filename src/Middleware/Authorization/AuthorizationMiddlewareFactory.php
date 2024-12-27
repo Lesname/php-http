@@ -11,7 +11,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 final class AuthorizationMiddlewareFactory
 {
-    public const ROUTE_KEY = 'authorizations';
+    public const string ROUTE_KEY = 'authorizations';
 
     /**
      * @throws ContainerExceptionInterface
@@ -54,12 +54,14 @@ final class AuthorizationMiddlewareFactory
 
         foreach ($routes as $key => $route) {
             assert(is_array($route));
+            assert(is_string($key));
 
             if (isset($route[self::ROUTE_KEY])) {
                 $authorizations[$key] = $route[self::ROUTE_KEY];
             }
         }
 
+        // @phpstan-ignore return.type
         return $authorizations;
     }
 }

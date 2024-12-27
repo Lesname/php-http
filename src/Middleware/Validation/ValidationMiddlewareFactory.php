@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace LessHttp\Middleware\Validation;
 
+use Psr\Log\LoggerInterface;
+use LessValidator\Builder\ValidatorBuilder;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessValidator\Builder\TypeDocumentValidatorBuilder;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -20,9 +22,6 @@ final class ValidationMiddlewareFactory
      */
     public function __invoke(ContainerInterface $container): ValidationMiddleware
     {
-        $validatorBuilder = $container->get(TypeDocumentValidatorBuilder::class);
-        assert($validatorBuilder instanceof TypeDocumentValidatorBuilder);
-
         $routeInputDocumentor = $container->get(RouteInputDocumentor::class);
         assert($routeInputDocumentor instanceof RouteInputDocumentor);
 
@@ -31,6 +30,12 @@ final class ValidationMiddlewareFactory
 
         $streamFactory = $container->get(StreamFactoryInterface::class);
         assert($streamFactory instanceof StreamFactoryInterface);
+
+        $translator = $container->get(TranslatorInterface::class);
+        assert($translator instanceof TranslatorInterface);
+
+        $logger = $container->get(LoggerInterface::class);
+        assert($logger instanceof LoggerInterface);
 
         $cache = $container->get(CacheInterface::class);
         assert($cache instanceof CacheInterface);
@@ -42,11 +47,12 @@ final class ValidationMiddlewareFactory
         /** @var array<string, array<mixed>> $routes */
 
         return new ValidationMiddleware(
-            $validatorBuilder,
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
+            $translator,
             $container,
+            $logger,
             $cache,
             $routes,
         );

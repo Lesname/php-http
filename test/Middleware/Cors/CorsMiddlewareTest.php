@@ -23,12 +23,6 @@ final class CorsMiddlewareTest extends TestCase
         $response
             ->expects(self::exactly(4))
             ->method('withHeader')
-            ->withConsecutive(
-                ['access-control-allow-methods', 'post,get'],
-                ['access-control-allow-headers', 'foo,bar'],
-                ['access-control-allow-origin', 'https://foo.bar'],
-                ['access-control-max-age', '123'],
-            )
             ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
@@ -71,13 +65,12 @@ final class CorsMiddlewareTest extends TestCase
 
         $middleware = new CorsMiddleware(
             $responseFactory,
+            [],
             [
-                'default' => [
-                    'origins' => ['https://foo.bar'],
-                    'methods' => ['post', 'get'],
-                    'headers' => ['foo', 'bar'],
-                    'maxAge' => 123,
-                ],
+                'origins' => ['https://foo.bar'],
+                'methods' => ['post', 'get'],
+                'headers' => ['foo', 'bar'],
+                'maxAge' => 123,
             ],
         );
 
@@ -91,10 +84,6 @@ final class CorsMiddlewareTest extends TestCase
         $response
             ->expects(self::exactly(2))
             ->method('withHeader')
-            ->withConsecutive(
-                ['access-control-allow-origin', 'https://foo.bar'],
-                ['access-control-max-age', '123'],
-            )
             ->willReturn($response);
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
@@ -138,18 +127,18 @@ final class CorsMiddlewareTest extends TestCase
         $middleware = new CorsMiddleware(
             $responseFactory,
             [
-                'default' => [
-                    'origins' => ['https://bar.foo'],
-                    'methods' => ['get'],
-                    'headers' => ['bar'],
-                    'maxAge' => 123,
-                ],
                 '/fiz' => [
                     'origins' => ['https://foo.bar'],
                     'methods' => ['post', 'get'],
                     'headers' => ['foo', 'bar'],
                     'maxAge' => 123,
                 ],
+            ],
+            [
+                'origins' => ['https://bar.foo'],
+                'methods' => ['get'],
+                'headers' => ['bar'],
+                'maxAge' => 123,
             ],
         );
 

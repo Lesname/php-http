@@ -4,14 +4,13 @@ declare(strict_types=1);
 namespace LessHttp\Middleware\Validation;
 
 use JsonException;
+use NumberFormatter;
+use Psr\Log\LoggerInterface;
+use LessValidator\ValidateResult;
+use LessValidator\Builder\GenericValidatorBuilder;
 use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessDocumentor\Type\Document\TypeDocument;
 use LessHttp\Response\ErrorResponse;
-use LessValidator\Builder\TypeDocumentValidatorBuilder;
-use LessValidator\ChainValidator;
-use LessValidator\Composite\PropertyKeysValidator;
-use LessValidator\Composite\PropertyValuesValidator;
-use LessValidator\TypeValidator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use LessValidator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -28,7 +27,6 @@ use Psr\SimpleCache\InvalidArgumentException;
 final class ValidationMiddleware implements MiddlewareInterface
 {
     /**
-     * @param TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder
      * @param RouteInputDocumentor $routeInputDocumentor
      * @param ResponseFactoryInterface $responseFactory
      * @param StreamFactoryInterface $streamFactory
@@ -37,11 +35,12 @@ final class ValidationMiddleware implements MiddlewareInterface
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
-        private readonly TypeDocumentValidatorBuilder $typeDocumentValidatorBuilder,
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
+        private readonly TranslatorInterface $translator,
         private readonly ContainerInterface $container,
+        private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
         private readonly array $routes,
     ) {}
@@ -61,12 +60,14 @@ final class ValidationMiddleware implements MiddlewareInterface
             $result = $validator->validate($body);
 
             if (!$result->isValid()) {
+                $locale = $this->getPreferredLanguage($request);
+
                 $stream = $this->streamFactory->createStream(
                     json_encode(
                         new ErrorResponse(
                             'Invalid parameters provided',
                             'invalidBody',
-                            $result,
+                            $this->toData($result, $locale),
                         ),
                         flags: JSON_THROW_ON_ERROR,
                     ),
@@ -81,6 +82,75 @@ final class ValidationMiddleware implements MiddlewareInterface
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * @psalm-suppress MixedAssignment
+     */
+    private function getPreferredLanguage(ServerRequestInterface $request): string
+    {
+        $useLocale = $request->getAttribute('useLocale');
+
+        return is_string($useLocale)
+            ? $useLocale
+            : $this->translator->getLocale();
+    }
+
+    private function toData(ValidateResult\ValidateResult $result, string $locale): mixed
+    {
+        if (
+            $result instanceof ValidateResult\Collection\SelfValidateResult
+            ||
+            $result instanceof ValidateResult\Composite\SelfValidateResult
+        ) {
+            return ['self' => $this->toData($result->self, $locale)];
+        }
+
+        if ($result instanceof ValidateResult\Collection\ItemsValidateResult) {
+            return [
+                'items' => array_map(
+                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    $result->items,
+                ),
+            ];
+        }
+
+        if ($result instanceof ValidateResult\Composite\PropertiesValidateResult) {
+            return [
+                'properties' => array_map(
+                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    $result->properties,
+                ),
+            ];
+        }
+
+        if ($result instanceof ValidateResult\ErrorValidateResult) {
+            $context = [];
+
+            $numberFormatter = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+
+            foreach ($result->context as $key => $value) {
+                $context["%{$key}%"] = match (true) {
+                    is_int($value), is_float($value) => $numberFormatter->format($value),
+                    is_array($value) => implode(', ', $value),
+                    default => $value,
+                };
+            }
+
+            $message = $this->translator->trans("validation.{$result->code}", $context, locale: $locale);
+
+            if ($message === $result->code) {
+                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
+            }
+
+            return [
+                'context' => $result->context,
+                'code' => $result->code,
+                'message' => $message,
+            ];
+        }
+
+        return $result;
     }
 
     /**
@@ -132,9 +202,9 @@ final class ValidationMiddleware implements MiddlewareInterface
 
         $document = $this->routeInputDocumentor->document($routeSettings);
 
-        return $this
-            ->typeDocumentValidatorBuilder
-            ->fromTypeDocument($document);
+        return (new GenericValidatorBuilder())
+            ->withTypeDocument($document)
+            ->build();
     }
 
     /**

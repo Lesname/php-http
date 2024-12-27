@@ -6,6 +6,7 @@ namespace LessHttp\Middleware\Throttle;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
+use LessHttp\Middleware\Throttle\Parameter\By;
 use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LessHttp\Response\ErrorResponse;
 use LessValueObject\Composite\ForeignReference;
@@ -22,13 +23,14 @@ final class ThrottleMiddleware implements MiddlewareInterface
     /**
      * @param ResponseFactoryInterface $responseFactory
      * @param Connection $connection
-     * @param array<array{duration: int, points: int}> $limits
+     * @param array<array{duration: int, points: int, action?: string, by?: By}> $limits
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly Connection $connection,
         private readonly array $limits,
+        private readonly int $usageModifier,
     ) {
         assert(count($limits) > 0);
     }
@@ -77,6 +79,22 @@ final class ThrottleMiddleware implements MiddlewareInterface
      */
     private function isThrottled(ServerRequestInterface $request): bool
     {
+        if ($this->isThrottledByLimits($request)) {
+            return true;
+        }
+
+        if ($this->isThrottledByUsage()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function isThrottledByLimits(ServerRequestInterface $request): bool
+    {
         $identity = $this->getIdentityFromRequest($request);
         $ip = $this->getIpFromRequest($request);
 
@@ -85,8 +103,8 @@ coalesce(
     SUM(
         case
             when floor(response / 100) = 2 THEN 1
-            when floor(response / 100) = 4 then 3
-            when floor(response / 100) = 5 then 2
+            when floor(response / 100) = 4 then 7
+            when floor(response / 100) = 5 then 3
             else 5
         end
     ),
@@ -109,6 +127,27 @@ SQL;
 
         foreach ($this->limits as $limit) {
             $limitBuilder = clone $builder;
+
+            if (isset($limit['action'])) {
+                if ($limit['action'] !== $this->getActionFromRequest($request)) {
+                    continue;
+                }
+
+                $limitBuilder
+                    ->andWhere('action = :action')
+                    ->setParameter('action', $this->getActionFromRequest($request));
+            }
+
+            if (isset($limit['by'])) {
+                if (
+                    ($limit['by'] === By::Identity && $identity === null)
+                    ||
+                    ($limit['by'] === By::Guest && $identity !== null)
+                ) {
+                    continue;
+                }
+            }
+
             $points = $limitBuilder
                 ->andWhere('requested_on >= :since')
                 ->setParameter('since', $now - ($limit['duration'] * 1_000))
@@ -122,6 +161,36 @@ SQL;
         }
 
         return false;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function isThrottledByUsage(): bool
+    {
+        $builder = $this->connection->createQueryBuilder();
+        $builder->from('throttle_request', 'tr');
+
+        $historyUsageBuilder = clone $builder;
+        $historyUsageBuilder->select("greatest(coalesce(sum(((floor(response / 100) = 4) * 4) + ((floor(response / 100) != 4))), 0) / 4, 500) * {$this->usageModifier}");
+
+        $currentUsageBuilder = clone $builder;
+        $currentUsageBuilder->select('coalesce(sum(((floor(response / 100) = 4) * 4) + ((floor(response / 100) != 4))), 0)');
+
+        $currentUsageBuilder->andWhere('tr.requested_on >= (UNIX_TIMESTAMP() - 900) * 1000');
+
+        for ($day = 1; $day <= 7; $day += 1) {
+            $whereRange = <<<SQL
+(
+    tr.requested_on >= (UNIX_TIMESTAMP() - (86400 * {$day}) - 900) * 1000
+    AND
+    tr.requested_on <= (UNIX_TIMESTAMP() - (86400 * {$day}) + 900) * 1000
+)
+SQL;
+            $historyUsageBuilder->orWhere($whereRange);
+        }
+
+        return $historyUsageBuilder->fetchOne() <= $currentUsageBuilder->fetchOne();
     }
 
     /**
