@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LessHttp\Middleware\Cors;
 
+use RuntimeException;
+use Psr\Log\LoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -28,12 +30,22 @@ final class CorsMiddlewareFactory
         $cors = $config['cors'];
 
         if (!isset($cors['default'])) {
+            $logger = $container->get(LoggerInterface::class);
+            assert($logger instanceof LoggerInterface);
+
+            $logger->warning('No defaults cors config found');
+
             $cors = ['default' => $cors];
+        } elseif (!is_array($cors['default'])) {
+            throw new RuntimeException('Default settings needs to be an array');
         }
 
         return new CorsMiddleware(
             $responseFactory,
+            // @phpstan-ignore argument.type
             $cors,
+            // @phpstan-ignore argument.type
+            $cors['default'],
         );
     }
 }

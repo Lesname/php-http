@@ -12,18 +12,19 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class CorsMiddleware implements MiddlewareInterface
 {
     /**
-     * @param ResponseFactoryInterface $responseFactory
-     * @param array<string, array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int}> $settings
+     * @param array<array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int}> $pathSettings
+     * @param array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int} $defaultSettings
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
-        private readonly array $settings,
+        private readonly array $pathSettings,
+        private readonly array $defaultSettings,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
-        $settings = $this->settings[$path] ?? $this->settings['default'];
+        $settings = $this->pathSettings[$path] ?? $this->defaultSettings;
 
         if (strtolower($request->getMethod()) === 'options') {
             $response = $this->responseFactory->createResponse(204);
@@ -47,9 +48,7 @@ final class CorsMiddleware implements MiddlewareInterface
 
         if (isset($settings['origins']) && in_array($request->getHeaderLine('origin'), $settings['origins'])) {
             $response = $response->withHeader('access-control-allow-origin', $request->getHeaderLine('origin'));
-        }
-
-        if (isset($settings['origin']) && ($settings['origin'] === '*' || $settings['origin'] === $request->getHeaderLine('origin'))) {
+        } elseif (isset($settings['origin']) && ($settings['origin'] === '*' || $settings['origin'] === $request->getHeaderLine('origin'))) {
             $response = $response->withHeader('access-control-allow-origin', $settings['origin']);
         }
 
