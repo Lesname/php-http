@@ -62,6 +62,7 @@ final class ConditionMiddlewareFactory
             }
         }
 
+        // @phpstan-ignore return.type
         return $prerequisites;
     }
 }

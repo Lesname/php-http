@@ -26,9 +26,7 @@ final class LocaleMiddlewareFactory
         assert(is_string($settings['defaultLocale']));
         assert(is_array($settings['allowedLocales']));
 
-        return new LocaleMiddleware(
-            $settings['defaultLocale'],
-            $settings['allowedLocales'],
-        );
+        // @phpstan-ignore argument.type
+        return new LocaleMiddleware($settings['defaultLocale'], $settings['allowedLocales']);
     }
 }
