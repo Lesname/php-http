@@ -18,10 +18,12 @@ final class CorsMiddlewareFactoryTest extends TestCase
     {
         $config = [
             'cors' => [
-                'origins' => ['https://foo.bar'],
-                'methods' => ['fiz'],
-                'headers' => ['abc'],
-                'maxAge' => 86400,
+                'default' => [
+                    'origins' => ['https://foo.bar'],
+                    'methods' => ['fiz'],
+                    'headers' => ['abc'],
+                    'maxAge' => 86400,
+                ],
             ],
         ];
 

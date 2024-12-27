@@ -65,13 +65,12 @@ final class CorsMiddlewareTest extends TestCase
 
         $middleware = new CorsMiddleware(
             $responseFactory,
+            [],
             [
-                'default' => [
-                    'origins' => ['https://foo.bar'],
-                    'methods' => ['post', 'get'],
-                    'headers' => ['foo', 'bar'],
-                    'maxAge' => 123,
-                ],
+                'origins' => ['https://foo.bar'],
+                'methods' => ['post', 'get'],
+                'headers' => ['foo', 'bar'],
+                'maxAge' => 123,
             ],
         );
 
@@ -128,18 +127,18 @@ final class CorsMiddlewareTest extends TestCase
         $middleware = new CorsMiddleware(
             $responseFactory,
             [
-                'default' => [
-                    'origins' => ['https://bar.foo'],
-                    'methods' => ['get'],
-                    'headers' => ['bar'],
-                    'maxAge' => 123,
-                ],
                 '/fiz' => [
                     'origins' => ['https://foo.bar'],
                     'methods' => ['post', 'get'],
                     'headers' => ['foo', 'bar'],
                     'maxAge' => 123,
                 ],
+            ],
+            [
+                'origins' => ['https://bar.foo'],
+                'methods' => ['get'],
+                'headers' => ['bar'],
+                'maxAge' => 123,
             ],
         );
 

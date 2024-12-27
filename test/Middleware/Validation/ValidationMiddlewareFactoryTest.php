@@ -22,7 +22,6 @@ final class ValidationMiddlewareFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
-        $validatorBuilder = $this->createMock(TypeDocumentValidatorBuilder::class);
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
         $routeInputDocumentor = $this->createMock(RouteInputDocumentor::class);
@@ -32,11 +31,10 @@ final class ValidationMiddlewareFactoryTest extends TestCase
 
         $container = $this->createMock(ContainerInterface::class);
         $container
-            ->expects(self::exactly(8))
+            ->expects(self::exactly(7))
             ->method('get')
             ->willReturnMap(
                 [
-                    [TypeDocumentValidatorBuilder::class, $validatorBuilder],
                     [ResponseFactoryInterface::class, $responseFactory],
                     [StreamFactoryInterface::class, $streamFactory],
                     [RouteInputDocumentor::class, $routeInputDocumentor],
