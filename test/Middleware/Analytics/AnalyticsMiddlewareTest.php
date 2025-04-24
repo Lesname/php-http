@@ -1,16 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Analytics;
+namespace LesHttpTest\Middleware\Analytics;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
-use LessDatabase\Query\Builder\Helper\LabelHelper;
-use LessHttp\Middleware\Analytics\AnalyticsMiddleware;
-use LessValueObject\Composite\ForeignReference;
-use LessValueObject\Number\Int\Date\MilliTimestamp;
-use PHPUnit\Framework\Constraint\Callback;
+use LesDatabase\Query\Builder\Helper\LabelHelper;
+use LesHttp\Middleware\Analytics\AnalyticsMiddleware;
+use LesValueObject\Composite\ForeignReference;
+use LesValueObject\Number\Int\Date\MilliTimestamp;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
 /**
- * @covers \LessHttp\Middleware\Analytics\AnalyticsMiddleware
+ * @covers \LesHttp\Middleware\Analytics\AnalyticsMiddleware
  */
 final class AnalyticsMiddlewareTest extends TestCase
 {

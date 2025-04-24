@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Condition;
+namespace LesHttp\Middleware\Condition;
 
 use Closure;
+use Override;
 use JsonException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -13,9 +14,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LessHttp\Middleware\Condition\Constraint\ConditionConstraint;
-use LessHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
-use LessHttp\Middleware\Condition\Constraint\Result\UnsatisfiedConditionConstraintResult;
+use LesHttp\Middleware\Condition\Constraint\ConditionConstraint;
+use LesHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
+use LesHttp\Middleware\Condition\Constraint\Result\UnsatisfiedConditionConstraintResult;
 
 final class ConditionMiddleware implements MiddlewareInterface
 {
@@ -43,6 +44,7 @@ final class ConditionMiddleware implements MiddlewareInterface
     /**
      * @throws JsonException
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();

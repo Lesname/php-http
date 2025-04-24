@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Authorization;
+namespace LesHttpTest\Middleware\Authorization;
 
-use LessHttp\Middleware\Authorization\AuthorizationMiddleware;
-use LessHttp\Middleware\Authorization\AuthorizationMiddlewareFactory;
+use LesHttp\Middleware\Authorization\AuthorizationMiddleware;
+use LesHttp\Middleware\Authorization\AuthorizationMiddlewareFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * @covers \LessHttp\Middleware\Authorization\AuthorizationMiddlewareFactory
+ * @covers \LesHttp\Middleware\Authorization\AuthorizationMiddlewareFactory
  */
 final class AuthorizationMiddlewareFactoryTest extends TestCase
 {

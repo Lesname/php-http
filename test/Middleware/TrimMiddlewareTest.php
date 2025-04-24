@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware;
+namespace LesHttpTest\Middleware;
 
-use LessHttp\Middleware\TrimMiddleware;
+use LesHttp\Middleware\TrimMiddleware;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * @covers \LessHttp\Middleware\TrimMiddleware
+ * @covers \LesHttp\Middleware\TrimMiddleware
  */
 final class TrimMiddlewareTest extends TestCase
 {

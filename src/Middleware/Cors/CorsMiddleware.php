@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Cors;
+namespace LesHttp\Middleware\Cors;
 
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +22,7 @@ final class CorsMiddleware implements MiddlewareInterface
         private readonly array $defaultSettings,
     ) {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();

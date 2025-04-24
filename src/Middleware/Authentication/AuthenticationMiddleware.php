@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication;
+namespace LesHttp\Middleware\Authentication;
 
-use LessHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
+use Override;
+use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +18,7 @@ final class AuthenticationMiddleware implements MiddlewareInterface
     public function __construct(private readonly array $adapters)
     {}
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         foreach ($this->adapters as $adapter) {

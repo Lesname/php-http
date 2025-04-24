@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Condition\Constraint;
+namespace LesHttp\Middleware\Condition\Constraint;
 
 use Psr\Http\Message\ServerRequestInterface;
-use LessHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
+use LesHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
 
 interface ConditionConstraint
 {

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication\Adapter;
+namespace LesHttp\Middleware\Authentication\Adapter;
 
-use LessValueObject\Composite\ForeignReference;
+use LesValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthenticationAdapter

@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Authentication;
+namespace LesHttpTest\Middleware\Authentication;
 
-use LessHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
-use LessHttp\Middleware\Authentication\AuthenticationMiddleware;
-use LessValueObject\Composite\ForeignReference;
+use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
+use LesHttp\Middleware\Authentication\AuthenticationMiddleware;
+use LesValueObject\Composite\ForeignReference;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * @covers \LessHttp\Middleware\Authentication\AuthenticationMiddleware
+ * @covers \LesHttp\Middleware\Authentication\AuthenticationMiddleware
  */
 final class AuthenticationMiddlewareTest extends TestCase
 {

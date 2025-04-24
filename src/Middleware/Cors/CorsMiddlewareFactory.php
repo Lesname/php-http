@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Cors;
+namespace LesHttp\Middleware\Cors;
 
 use RuntimeException;
 use Psr\Log\LoggerInterface;

@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Throttle;
+namespace LesHttpTest\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
-use LessHttp\Middleware\Throttle\ThrottleMiddleware;
-use LessValueObject\Composite\ForeignReference;
+use LesHttp\Middleware\Throttle\ThrottleMiddleware;
+use LesValueObject\Composite\ForeignReference;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
 /**
- * @covers \LessHttp\Middleware\Throttle\ThrottleMiddleware
+ * @covers \LesHttp\Middleware\Throttle\ThrottleMiddleware
  */
 final class ThrottleMiddlewareTest extends TestCase
 {

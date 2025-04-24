@@ -1,12 +1,12 @@
 {
-  "name": "lessname/http",
+  "name": "lesname/http",
   "license": "MIT",
   "require": {
     "php": "^8.4.0",
 
-    "lessname/validator": "^0.5.0",
-    "lessname/cache": "^0.3.0",
-    "lessname/database": "^0.3.0",
+    "lesname/validator": "^0.6.0",
+    "lesname/cache": "^0.4.0",
+    "lesname/database": "^0.4.0",
 
     "psr/http-server-middleware": "^1.0.0",
     "psr/http-factory": "^1.0.0",
@@ -20,16 +20,16 @@
     "phpstan/phpstan": "^2.0.0",
     "phpunit/phpunit": "^10.0.0",
 
-    "lessname/token": "^0.3.0"
+    "lesname/token": "^0.4.0"
   },
   "autoload": {
     "psr-4": {
-      "LessHttp\\": "src/"
+      "LesHttp\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "LessHttpTest\\": "test/"
+      "LesHttpTest\\": "test/"
     }
   }
 }

@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Analytics;
+namespace LesHttp\Middleware\Analytics;
 
+use Override;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
-use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
-use LessValueObject\Composite\ForeignReference;
-use LessValueObject\Number\Exception\MaxOutBounds;
-use LessValueObject\Number\Exception\MinOutBounds;
-use LessValueObject\Number\Int\Date\MilliTimestamp;
+use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LesValueObject\Composite\ForeignReference;
+use LesValueObject\Number\Exception\MaxOutBounds;
+use LesValueObject\Number\Exception\MinOutBounds;
+use LesValueObject\Number\Int\Date\MilliTimestamp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -31,6 +32,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
      * @throws JsonException
      * @throws MaxOutBounds
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (in_array(strtolower($request->getMethod()), ['options', 'head'], true)) {
@@ -95,7 +97,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
                     'user_agent' => $this->getUserAgentFromRequest($request),
 
                     'requested_on' => $startTime,
-                    'duration' => $now->getValue() - $startTime,
+                    'duration' => $now->value - $startTime,
 
                     'response' => $response,
                     'error' => $error,

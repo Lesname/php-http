@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Validation;
+namespace LesHttpTest\Middleware\Validation;
 
 use Psr\Log\LoggerInterface;
-use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessValidator\ValidateResult\ErrorValidateResult;
+use LesDocumentor\Route\Input\RouteInputDocumentor;
+use LesValidator\ValidateResult\ErrorValidateResult;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LessHttp\Middleware\Validation\ValidationMiddleware;
-use LessValidator\ValidateResult\ValidateResult;
-use LessValidator\Validator;
+use LesHttp\Middleware\Validation\ValidationMiddleware;
+use LesValidator\ValidateResult\ValidateResult;
+use LesValidator\Validator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -22,7 +22,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * @covers \LessHttp\Middleware\Validation\ValidationMiddleware
+ * @covers \LesHttp\Middleware\Validation\ValidationMiddleware
  */
 final class ValidationMiddlewareTest extends TestCase
 {

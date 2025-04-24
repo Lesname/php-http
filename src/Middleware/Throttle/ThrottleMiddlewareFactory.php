@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Throttle;
+namespace LesHttp\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
 use Psr\Container\ContainerExceptionInterface;

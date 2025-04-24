@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Cors;
+namespace LesHttpTest\Middleware\Cors;
 
-use LessHttp\Middleware\Cors\CorsMiddleware;
+use LesHttp\Middleware\Cors\CorsMiddleware;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -12,7 +12,7 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * @covers \LessHttp\Middleware\Cors\CorsMiddleware
+ * @covers \LesHttp\Middleware\Cors\CorsMiddleware
  */
 final class CorsMiddlewareTest extends TestCase
 {

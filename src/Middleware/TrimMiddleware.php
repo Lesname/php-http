@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware;
+namespace LesHttp\Middleware;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -11,6 +12,7 @@ use stdClass;
 
 final class TrimMiddleware implements MiddlewareInterface
 {
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $body = $request->getParsedBody();

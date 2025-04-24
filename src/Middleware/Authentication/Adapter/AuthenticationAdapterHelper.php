@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication\Adapter;
+namespace LesHttp\Middleware\Authentication\Adapter;
 
-use LessHttp\Middleware\Authentication\Adapter\Builder\AuthenticationAdapterBuilder;
+use LesHttp\Middleware\Authentication\Adapter\Builder\AuthenticationAdapterBuilder;
 
 final class AuthenticationAdapterHelper
 {

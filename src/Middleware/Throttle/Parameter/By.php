@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Throttle\Parameter;
+namespace LesHttp\Middleware\Throttle\Parameter;
 
 enum By: string
 {

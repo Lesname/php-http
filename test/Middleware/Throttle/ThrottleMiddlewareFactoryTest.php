@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Throttle;
+namespace LesHttpTest\Middleware\Throttle;
 
 use Doctrine\DBAL\Connection;
-use LessHttp\Middleware\Throttle\ThrottleMiddleware;
-use LessHttp\Middleware\Throttle\ThrottleMiddlewareFactory;
+use LesHttp\Middleware\Throttle\ThrottleMiddleware;
+use LesHttp\Middleware\Throttle\ThrottleMiddlewareFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * @covers \LessHttp\Middleware\Throttle\ThrottleMiddlewareFactory
+ * @covers \LesHttp\Middleware\Throttle\ThrottleMiddlewareFactory
  */
 final class ThrottleMiddlewareFactoryTest extends TestCase
 {

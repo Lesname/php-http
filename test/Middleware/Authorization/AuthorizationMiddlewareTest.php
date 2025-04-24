@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Authorization;
+namespace LesHttpTest\Middleware\Authorization;
 
-use LessHttp\Middleware\Authorization\AuthorizationMiddleware;
-use LessHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
+use LesHttp\Middleware\Authorization\AuthorizationMiddleware;
+use LesHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,7 +16,7 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * @covers \LessHttp\Middleware\Authorization\AuthorizationMiddleware
+ * @covers \LesHttp\Middleware\Authorization\AuthorizationMiddleware
  */
 final class AuthorizationMiddlewareTest extends TestCase
 {

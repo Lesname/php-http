@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication;
+namespace LesHttp\Middleware\Authentication;
 
-use LessHttp\Middleware\Authentication\Adapter\AuthenticationAdapterHelper;
+use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapterHelper;
 use Psr\Container\ContainerInterface;
 
 final class AuthenticationMiddlewareFactory

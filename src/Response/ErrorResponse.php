@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Response;
+namespace LesHttp\Response;
 
-use LessValueObject\Composite\AbstractCompositeValueObject;
+use LesValueObject\Composite\AbstractCompositeValueObject;
 
 /**
  * @psalm-immutable

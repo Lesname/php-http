@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Locale;
+namespace LesHttp\Middleware\Locale;
 
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

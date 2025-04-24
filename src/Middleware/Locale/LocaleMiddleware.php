@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Locale;
+namespace LesHttp\Middleware\Locale;
 
+use Override;
 use SplPriorityQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -36,6 +37,7 @@ final class LocaleMiddleware implements MiddlewareInterface
         $this->genericLocales = $genericLocales;
     }
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         return $handler->handle($request->withAttribute('useLocale', $this->detectUseLanguage($request)));
