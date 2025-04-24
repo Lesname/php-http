@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Authorization\Constraint;
+namespace LesHttpTest\Middleware\Authorization\Constraint;
 
 use Psr\Http\Message\ServerRequestInterface;
-use LessHttp\Middleware\Authorization\Constraint\NoOneAuthorizationConstraint;
+use LesHttp\Middleware\Authorization\Constraint\NoOneAuthorizationConstraint;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \LessHttp\Middleware\Authorization\Constraint\NoOneAuthorizationConstraint
+ * @covers \LesHttp\Middleware\Authorization\Constraint\NoOneAuthorizationConstraint
  */
 class NoOneAuthorizationConstraintTest extends TestCase
 {

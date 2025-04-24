@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication\Adapter;
+namespace LesHttp\Middleware\Authentication\Adapter;
 
-use LessToken\Codec\TokenCodec;
-use LessValueObject\Composite\Exception\CannotParseReference;
-use LessValueObject\Composite\ForeignReference;
-use LessValueObject\String\Exception\TooLong;
-use LessValueObject\String\Exception\TooShort;
-use LessValueObject\String\Format\Exception\NotFormat;
+use Override;
+use LesToken\Codec\TokenCodec;
+use LesValueObject\Composite\Exception\CannotParseReference;
+use LesValueObject\Composite\ForeignReference;
+use LesValueObject\String\Exception\TooLong;
+use LesValueObject\String\Exception\TooShort;
+use LesValueObject\String\Format\Exception\NotFormat;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
@@ -27,6 +28,7 @@ REGEXP;
      * @throws TooShort
      * @throws NotFormat
      */
+    #[Override]
     public function resolve(ServerRequestInterface $request): ?ForeignReference
     {
         $header = $request->getHeaderLine('authorization');

@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Cors;
+namespace LesHttpTest\Middleware\Cors;
 
-use LessHttp\Middleware\Cors\CorsMiddleware;
-use LessHttp\Middleware\Cors\CorsMiddlewareFactory;
+use LesHttp\Middleware\Cors\CorsMiddleware;
+use LesHttp\Middleware\Cors\CorsMiddlewareFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 
 /**
- * @covers \LessHttp\Middleware\Cors\CorsMiddlewareFactory
+ * @covers \LesHttp\Middleware\Cors\CorsMiddlewareFactory
  */
 final class CorsMiddlewareFactoryTest extends TestCase
 {

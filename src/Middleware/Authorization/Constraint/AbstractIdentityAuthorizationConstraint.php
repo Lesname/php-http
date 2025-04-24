@@ -1,16 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authorization\Constraint;
+namespace LesHttp\Middleware\Authorization\Constraint;
 
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
-use LessValueObject\Composite\ForeignReference;
+use LesValueObject\Composite\ForeignReference;
 
 abstract class AbstractIdentityAuthorizationConstraint implements AuthorizationConstraint
 {
     /**
      * @psalm-suppress MixedAssignment
      */
+    #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
     {
         $identity = $request->getAttribute('identity');

@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Condition\Constraint\Result;
+namespace LesHttp\Middleware\Condition\Constraint\Result;
+
+use Override;
 
 /**
  * @psalm-immutable
@@ -16,6 +18,7 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
         public readonly array $context = []
     ) {}
 
+    #[Override]
     public function isSatisfied(): bool
     {
         return false;
@@ -24,6 +27,7 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
     /**
      * @return array<string, mixed>
      */
+    #[Override]
     public function jsonSerialize(): array
     {
         return [

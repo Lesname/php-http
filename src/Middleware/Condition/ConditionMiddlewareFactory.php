@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Condition;
+namespace LesHttp\Middleware\Condition;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\StreamFactoryInterface;

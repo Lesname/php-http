@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authorization;
+namespace LesHttp\Middleware\Authorization;
 
+use Override;
 use JsonException;
-use LessHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
-use LessHttp\Response\ErrorResponse;
+use LesHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
+use LesHttp\Response\ErrorResponse;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -41,6 +42,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
      * @throws NotFoundExceptionInterface
      * @throws JsonException
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();

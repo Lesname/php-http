@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Authentication\Adapter;
+namespace LesHttpTest\Middleware\Authentication\Adapter;
 
-use LessHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
-use LessHttp\Middleware\Authentication\Adapter\JwtAuthenticationAdapter;
-use LessToken\Codec\JwtTokenCodec;
-use LessToken\Codec\TokenCodec;
-use LessToken\Signer\HmacSigner;
-use LessToken\Signer\Key\FileKey;
+use LesHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
+use LesHttp\Middleware\Authentication\Adapter\JwtAuthenticationAdapter;
+use LesToken\Codec\JwtTokenCodec;
+use LesToken\Codec\TokenCodec;
+use LesToken\Signer\HmacSigner;
+use LesToken\Signer\Key\FileKey;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @covers \LessHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter
+ * @covers \LesHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter
  */
 final class BearerAuthenticationAdapterTest extends TestCase
 {

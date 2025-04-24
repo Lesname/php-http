@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Validation;
+namespace LesHttp\Middleware\Validation;
 
+use Override;
 use JsonException;
 use NumberFormatter;
 use Psr\Log\LoggerInterface;
-use LessValidator\ValidateResult;
-use LessValidator\Builder\GenericValidatorBuilder;
-use LessDocumentor\Route\Input\RouteInputDocumentor;
-use LessHttp\Response\ErrorResponse;
+use LesValidator\ValidateResult;
+use LesDocumentor\Route\Input\RouteInputDocumentor;
+use LesHttp\Response\ErrorResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LessValidator\Validator;
+use LesValidator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -23,15 +23,11 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
+use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
 final class ValidationMiddleware implements MiddlewareInterface
 {
     /**
-     * @param RouteInputDocumentor $routeInputDocumentor
-     * @param ResponseFactoryInterface $responseFactory
-     * @param StreamFactoryInterface $streamFactory
-     * @param ContainerInterface $container
-     * @param CacheInterface $cache
      * @param array<string, array<mixed>> $routes
      */
     public function __construct(
@@ -51,6 +47,7 @@ final class ValidationMiddleware implements MiddlewareInterface
      * @throws NotFoundExceptionInterface
      * @throws JsonException
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $validator = $this->getValidatorFromRequest($request);
@@ -202,8 +199,7 @@ final class ValidationMiddleware implements MiddlewareInterface
 
         $document = $this->routeInputDocumentor->document($routeSettings);
 
-        return (new GenericValidatorBuilder())
-            ->withTypeDocument($document)
+        return (new TypeDocumentValidatorBuilder($document))
             ->build();
     }
 

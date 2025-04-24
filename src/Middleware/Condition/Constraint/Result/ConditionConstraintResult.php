@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Condition\Constraint\Result;
+namespace LesHttp\Middleware\Condition\Constraint\Result;
 
 use JsonSerializable;
 

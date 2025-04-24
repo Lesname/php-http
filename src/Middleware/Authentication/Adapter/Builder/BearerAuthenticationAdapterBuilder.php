@@ -1,17 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authentication\Adapter\Builder;
+namespace LesHttp\Middleware\Authentication\Adapter\Builder;
 
-use LessHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
-use LessHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
-use LessToken\Codec\TokenCodecHelper;
+use Override;
+use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
+use LesHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
+use LesToken\Codec\TokenCodecHelper;
 
 final class BearerAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {
     /**
      * @param array<mixed> $config
      */
+    #[Override]
     public function build(array $config): AuthenticationAdapter
     {
         assert(is_array($config['codec']));

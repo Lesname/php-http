@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Throttle;
+namespace LesHttp\Middleware\Throttle;
 
+use Override;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
-use LessHttp\Middleware\Throttle\Parameter\By;
-use LessDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
-use LessHttp\Response\ErrorResponse;
-use LessValueObject\Composite\ForeignReference;
+use LesHttp\Middleware\Throttle\Parameter\By;
+use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
+use LesHttp\Response\ErrorResponse;
+use LesValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,6 +40,7 @@ final class ThrottleMiddleware implements MiddlewareInterface
      * @throws Exception
      * @throws JsonException
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isThrottled($request)) {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Authorization;
+namespace LesHttp\Middleware\Authorization;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;

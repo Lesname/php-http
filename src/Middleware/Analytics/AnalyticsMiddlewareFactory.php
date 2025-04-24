@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Analytics;
+namespace LesHttp\Middleware\Analytics;
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;

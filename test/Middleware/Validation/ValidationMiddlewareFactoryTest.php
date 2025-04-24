@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttpTest\Middleware\Validation;
+namespace LesHttpTest\Middleware\Validation;
 
 use Psr\Log\LoggerInterface;
-use LessDocumentor\Route\Input\RouteInputDocumentor;
+use LesDocumentor\Route\Input\RouteInputDocumentor;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LessHttp\Middleware\Validation\ValidationMiddleware;
-use LessHttp\Middleware\Validation\ValidationMiddlewareFactory;
-use LessValidator\Builder\TypeDocumentValidatorBuilder;
+use LesHttp\Middleware\Validation\ValidationMiddleware;
+use LesHttp\Middleware\Validation\ValidationMiddlewareFactory;
+use LesValidator\Builder\TypeDocumentValidatorBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,7 +16,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
- * @covers \LessHttp\Middleware\Validation\ValidationMiddlewareFactory
+ * @covers \LesHttp\Middleware\Validation\ValidationMiddlewareFactory
  */
 final class ValidationMiddlewareFactoryTest extends TestCase
 {

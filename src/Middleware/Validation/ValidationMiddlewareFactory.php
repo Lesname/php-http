@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace LessHttp\Middleware\Validation;
+namespace LesHttp\Middleware\Validation;
 
 use Psr\Log\LoggerInterface;
-use LessValidator\Builder\ValidatorBuilder;
-use LessDocumentor\Route\Input\RouteInputDocumentor;
+use LesValidator\Builder\ValidatorBuilder;
+use LesDocumentor\Route\Input\RouteInputDocumentor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
