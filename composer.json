@@ -20,7 +20,9 @@
     "phpstan/phpstan": "^2.0.0",
     "phpunit/phpunit": "^10.0.0",
 
-    "lesname/token": "^0.4.0"
+    "lesname/token": "^0.4.0",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan-deprecation-rules": "^2.0"
   },
   "autoload": {
     "psr-4": {
@@ -30,6 +32,11 @@
   "autoload-dev": {
     "psr-4": {
       "LesHttpTest\\": "test/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true
     }
   }
 }

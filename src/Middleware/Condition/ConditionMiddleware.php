@@ -6,13 +6,16 @@ namespace LesHttp\Middleware\Condition;
 use Closure;
 use Override;
 use JsonException;
+use LesHttp\Router\Route\Route;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use LesHttp\Middleware\Exception\NoRouteSet;
 use Psr\Http\Message\ResponseFactoryInterface;
+use LesHttp\Router\Route\Exception\OptionNotSet;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use LesHttp\Middleware\Condition\Constraint\ConditionConstraint;
 use LesHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
@@ -23,14 +26,10 @@ final class ConditionMiddleware implements MiddlewareInterface
     /** @var Closure(string $key): ConditionConstraint */
     private Closure $conditionContainer;
 
-    /**
-     * @param array<string, array<string>> $conditions
-     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly TranslatorInterface $translator,
-        private readonly array $conditions,
         ContainerInterface $container,
     ) {
         $this->conditionContainer = static function (string $key) use ($container): ConditionConstraint {
@@ -43,36 +42,43 @@ final class ConditionMiddleware implements MiddlewareInterface
 
     /**
      * @throws JsonException
+     * @throws NoRouteSet
+     * @throws OptionNotSet
      */
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $method = $request->getMethod();
-        $path = $request->getUri()->getPath();
-        $key = "{$method}:{$path}";
+        $route = $request->getAttribute('route');
 
-        if (isset($this->conditions[$key])) {
-            foreach ($this->conditions[$key] as $conditionKey) {
-                $result = ($this->conditionContainer)($conditionKey)->satisfies($request);
+        if (!$route instanceof Route) {
+            throw new NoRouteSet();
+        }
 
-                if (!$result->isSatisfied()) {
-                    $locale = $this->getUseLocale($request);
+        $conditions = $route->getOption('conditions');
+        assert(is_array($conditions));
 
-                    $json = json_encode(
-                        [
-                            'message' => $this->translator->trans('condition.notSatisfied'),
-                            'code' => 'conditionNotSatisfied',
-                            'data' => $this->translate($result, $locale),
-                        ],
-                        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
-                    );
+        foreach ($conditions as $conditionKey) {
+            assert(is_string($conditionKey));
 
-                    return $this
-                        ->responseFactory
-                        ->createResponse(409)
-                        ->withHeader('content-type', 'application/json')
-                        ->withBody($this->streamFactory->createStream($json));
-                }
+            $result = ($this->conditionContainer)($conditionKey)->satisfies($request);
+
+            if (!$result->isSatisfied()) {
+                $locale = $this->getUseLocale($request);
+
+                $json = json_encode(
+                    [
+                        'message' => $this->translator->trans('condition.notSatisfied'),
+                        'code' => 'conditionNotSatisfied',
+                        'data' => $this->translate($result, $locale),
+                    ],
+                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
+                );
+
+                return $this
+                    ->responseFactory
+                    ->createResponse(409)
+                    ->withHeader('content-type', 'application/json')
+                    ->withBody($this->streamFactory->createStream($json));
             }
         }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace LesHttpTest\Middleware\Validation;
 
 use Psr\Log\LoggerInterface;
+use LesHttp\Router\Route\Route;
+use LesHttp\Middleware\Exception\NoRouteSet;
 use LesDocumentor\Route\Input\RouteInputDocumentor;
 use LesValidator\ValidateResult\ErrorValidateResult;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -86,8 +88,6 @@ final class ValidationMiddlewareTest extends TestCase
             ->with(md5('validator:POST:/foo/bar'))
             ->willReturn($validator);
 
-        $routes = [];
-
         $middleware = new ValidationMiddleware(
             $routeInputDocumentor,
             $responseFactory,
@@ -96,7 +96,6 @@ final class ValidationMiddlewareTest extends TestCase
             $container,
             $logger,
             $cache,
-            $routes,
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
@@ -191,8 +190,6 @@ final class ValidationMiddlewareTest extends TestCase
             ->with(md5('validator:POST:/foo/bar'))
             ->willReturn($validator);
 
-        $routes = [];
-
         $translator = $this->createMock(TranslatorInterface::class);
         $translator
             ->expects(self::once())
@@ -214,7 +211,6 @@ final class ValidationMiddlewareTest extends TestCase
             $container,
             $logger,
             $cache,
-            $routes,
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
@@ -222,7 +218,7 @@ final class ValidationMiddlewareTest extends TestCase
 
     public function testNoRouteSettings(): void
     {
-        $response = $this->createMock(ResponseInterface::class);
+        $this->expectException(NoRouteSet::class);
 
         $uri = $this->createMock(UriInterface::class);
         $uri
@@ -243,11 +239,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->willReturn([]);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler
-            ->expects(self::once())
-            ->method('handle')
-            ->with($request)
-            ->willReturn($response);
+        $handler->expects(self::never())->method('handle');
 
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
@@ -264,8 +256,6 @@ final class ValidationMiddlewareTest extends TestCase
             ->with(md5('validator:POST:/foo/bar'))
             ->willReturn(null);
 
-        $routes = [];
-
         $translator = $this->createMock(TranslatorInterface::class);
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -278,10 +268,9 @@ final class ValidationMiddlewareTest extends TestCase
             $container,
             $logger,
             $cache,
-            $routes,
         );
 
-        self::assertSame($response, $middleware->process($request, $handler));
+        $middleware->process($request, $handler);
     }
 
     public function testDirectValidator(): void
@@ -350,11 +339,21 @@ final class ValidationMiddlewareTest extends TestCase
             ->method('set')
             ->with(md5('validator:POST:/foo/bar'), $validator);
 
-        $routes = [
-            'POST:/foo/bar' => [
-                'validator' => 'fizbiz',
-            ],
-        ];
+        $route = $this->createMock(Route::class);
+        $route
+            ->method('hasOption')
+            ->with('validator')
+            ->willReturn(true);
+
+        $route
+            ->method('getOption')
+            ->with('validator')
+            ->willReturn('fizbiz');
+
+        $request
+            ->method('getAttribute')
+            ->with('route')
+            ->willReturn($route);
 
         $translator = $this->createMock(TranslatorInterface::class);
 
@@ -368,7 +367,6 @@ final class ValidationMiddlewareTest extends TestCase
             $container,
             $logger,
             $cache,
-            $routes,
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
