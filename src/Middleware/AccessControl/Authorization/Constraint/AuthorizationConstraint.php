@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authorization\Constraint;
+namespace LesHttp\Middleware\AccessControl\Authorization\Constraint;
 
 use Psr\Http\Message\ServerRequestInterface;
 

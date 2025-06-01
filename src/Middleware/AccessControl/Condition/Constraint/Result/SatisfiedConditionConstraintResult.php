@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Condition\Constraint\Result;
+namespace LesHttp\Middleware\AccessControl\Condition\Constraint\Result;
 
 use Override;
 

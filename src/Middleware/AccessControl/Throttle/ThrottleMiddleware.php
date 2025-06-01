@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Throttle;
+namespace LesHttp\Middleware\AccessControl\Throttle;
 
 use Override;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
-use LesHttp\Middleware\Throttle\Parameter\By;
+use LesHttp\Middleware\AccessControl\Throttle\Parameter\By;
 use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LesHttp\Response\ErrorResponse;
 use LesValueObject\Composite\ForeignReference;
@@ -22,8 +22,6 @@ use Throwable;
 final class ThrottleMiddleware implements MiddlewareInterface
 {
     /**
-     * @param ResponseFactoryInterface $responseFactory
-     * @param Connection $connection
      * @param array<array{duration: int, points: int, action?: string, by?: By}> $limits
      */
     public function __construct(

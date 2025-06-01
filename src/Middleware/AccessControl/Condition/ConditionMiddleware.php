@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Condition;
+namespace LesHttp\Middleware\AccessControl\Condition;
 
 use Closure;
 use Override;
@@ -17,9 +17,9 @@ use LesHttp\Middleware\Exception\NoRouteSet;
 use Psr\Http\Message\ResponseFactoryInterface;
 use LesHttp\Router\Route\Exception\OptionNotSet;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use LesHttp\Middleware\Condition\Constraint\ConditionConstraint;
-use LesHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
-use LesHttp\Middleware\Condition\Constraint\Result\UnsatisfiedConditionConstraintResult;
+use LesHttp\Middleware\AccessControl\Condition\Constraint\ConditionConstraint;
+use LesHttp\Middleware\AccessControl\Condition\Constraint\Result\ConditionConstraintResult;
+use LesHttp\Middleware\AccessControl\Condition\Constraint\Result\UnsatisfiedConditionConstraintResult;
 
 final class ConditionMiddleware implements MiddlewareInterface
 {

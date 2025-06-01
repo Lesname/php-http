@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authentication\Adapter\Builder;
+namespace LesHttp\Middleware\AccessControl\Authentication\Adapter\Builder;
 
 use Override;
-use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
-use LesHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
 use LesToken\Codec\TokenCodecHelper;
+use LesHttp\Middleware\AccessControl\Authentication\Adapter\AuthenticationAdapter;
+use LesHttp\Middleware\AccessControl\Authentication\Adapter\BearerAuthenticationAdapter;
 
 final class BearerAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {

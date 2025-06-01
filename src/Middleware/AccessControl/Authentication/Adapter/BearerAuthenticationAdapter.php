@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authentication\Adapter;
+namespace LesHttp\Middleware\AccessControl\Authentication\Adapter;
 
 use Override;
 use LesToken\Codec\TokenCodec;
