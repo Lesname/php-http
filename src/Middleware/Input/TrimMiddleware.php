@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware;
+namespace LesHttp\Middleware\Input;
 
 use Override;
 use Psr\Http\Message\ResponseInterface;
@@ -10,9 +10,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
 
-/**
- * @deprecated use Input/TrimMiddleware
- */
 final class TrimMiddleware implements MiddlewareInterface
 {
     #[Override]

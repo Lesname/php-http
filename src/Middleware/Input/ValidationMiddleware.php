@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Validation;
+namespace LesHttp\Middleware\Input;
 
 use Override;
 use JsonException;
@@ -28,9 +28,6 @@ use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
-/**
- * @deprecated use Input/ValidationMiddleware
- */
 final class ValidationMiddleware implements MiddlewareInterface
 {
     public function __construct(
