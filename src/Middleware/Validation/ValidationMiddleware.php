@@ -28,6 +28,9 @@ use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
+/**
+ * @deprecated use Input/ValidationMiddleware
+ */
 final class ValidationMiddleware implements MiddlewareInterface
 {
     public function __construct(

@@ -20,6 +20,9 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
     public function __construct(

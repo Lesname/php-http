@@ -6,6 +6,9 @@ namespace LesHttp\Middleware\Authentication;
 use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapterHelper;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class AuthenticationMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): AuthenticationMiddleware

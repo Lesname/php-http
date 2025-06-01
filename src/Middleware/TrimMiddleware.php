@@ -10,6 +10,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
 
+/**
+ * @deprecated use Input/TrimMiddleware
+ */
 final class TrimMiddleware implements MiddlewareInterface
 {
     #[Override]

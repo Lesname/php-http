@@ -7,6 +7,7 @@ use Override;
 
 /**
  * @psalm-immutable
+ * @deprecated moved into AccessControl namespace
  */
 final class UnsatisfiedConditionConstraintResult implements ConditionConstraintResult
 {

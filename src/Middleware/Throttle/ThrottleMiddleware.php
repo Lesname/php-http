@@ -19,6 +19,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class ThrottleMiddleware implements MiddlewareInterface
 {
     /**

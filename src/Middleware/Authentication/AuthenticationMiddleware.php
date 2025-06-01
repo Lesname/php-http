@@ -10,6 +10,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class AuthenticationMiddleware implements MiddlewareInterface
 {
     /**

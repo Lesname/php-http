@@ -7,6 +7,9 @@ use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use LesValueObject\Composite\ForeignReference;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 abstract class AbstractIdentityAuthorizationConstraint implements AuthorizationConstraint
 {
     /**

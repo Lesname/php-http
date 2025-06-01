@@ -8,6 +8,9 @@ use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
 use LesHttp\Middleware\Authentication\Adapter\BearerAuthenticationAdapter;
 use LesToken\Codec\TokenCodecHelper;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class BearerAuthenticationAdapterBuilder implements AuthenticationAdapterBuilder
 {
     /**

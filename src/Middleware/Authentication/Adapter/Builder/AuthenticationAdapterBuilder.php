@@ -5,6 +5,9 @@ namespace LesHttp\Middleware\Authentication\Adapter\Builder;
 
 use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 interface AuthenticationAdapterBuilder
 {
     /**

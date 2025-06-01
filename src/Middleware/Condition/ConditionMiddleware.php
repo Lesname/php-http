@@ -21,6 +21,9 @@ use LesHttp\Middleware\Condition\Constraint\ConditionConstraint;
 use LesHttp\Middleware\Condition\Constraint\Result\ConditionConstraintResult;
 use LesHttp\Middleware\Condition\Constraint\Result\UnsatisfiedConditionConstraintResult;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class ConditionMiddleware implements MiddlewareInterface
 {
     /** @var Closure(string $key): ConditionConstraint */

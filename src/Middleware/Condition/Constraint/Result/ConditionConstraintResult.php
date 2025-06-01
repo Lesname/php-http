@@ -7,6 +7,7 @@ use JsonSerializable;
 
 /**
  * @psalm-immutable
+ * @deprecated moved into AccessControl namespace
  */
 interface ConditionConstraintResult extends JsonSerializable
 {
