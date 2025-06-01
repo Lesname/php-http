@@ -6,6 +6,9 @@ namespace LesHttp\Middleware\Authorization\Constraint;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @deprecated moved into AccessControl namespace
+ */
 final class AnyOneAuthorizationConstraint implements AuthorizationConstraint
 {
     #[Override]

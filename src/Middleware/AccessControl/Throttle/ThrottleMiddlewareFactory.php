@@ -10,9 +10,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
-/**
- * @deprecated moved into AccessControl namespace
- */
 final class ThrottleMiddlewareFactory
 {
     /**

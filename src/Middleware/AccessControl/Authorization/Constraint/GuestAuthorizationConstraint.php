@@ -6,9 +6,6 @@ namespace LesHttp\Middleware\Authorization\Constraint;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @deprecated moved into AccessControl namespace
- */
 abstract class GuestAuthorizationConstraint implements AuthorizationConstraint
 {
     #[Override]

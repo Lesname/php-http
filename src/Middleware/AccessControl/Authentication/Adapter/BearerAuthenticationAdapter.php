@@ -13,9 +13,6 @@ use LesValueObject\String\Format\Exception\NotFormat;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-/**
- * @deprecated moved into AccessControl namespace
- */
 final class BearerAuthenticationAdapter implements AuthenticationAdapter
 {
     private const string AUTHORIZATION_REGEXP = <<<'REGEXP'
