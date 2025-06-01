@@ -3,6 +3,7 @@
   "license": "MIT",
   "require": {
     "php": "^8.4.0",
+    "ext-ctype": "*",
 
     "lesname/validator": "^0.6.0",
     "lesname/cache": "^0.4.0",

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LesHttp\Middleware\AccessControl\Authentication\Adapter\Builder;
 
-use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
+use LesHttp\Middleware\AccessControl\Authentication\Adapter\AuthenticationAdapter;
 
 interface AuthenticationAdapterBuilder
 {
