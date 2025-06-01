@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authorization;
+namespace LesHttp\Middleware\AccessControl\Authorization;
 
 use Override;
 use JsonException;

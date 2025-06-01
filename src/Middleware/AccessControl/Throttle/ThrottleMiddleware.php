@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Throttle;
+namespace LesHttp\Middleware\AccessControl\Throttle;
 
 use Override;
 use Doctrine\DBAL\Connection;

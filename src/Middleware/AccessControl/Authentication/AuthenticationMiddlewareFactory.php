@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authentication;
+namespace LesHttp\Middleware\AccessControl\Authentication;
 
 use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapterHelper;
 use Psr\Container\ContainerInterface;

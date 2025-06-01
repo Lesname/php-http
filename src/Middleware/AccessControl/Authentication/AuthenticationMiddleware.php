@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Authentication;
+namespace LesHttp\Middleware\AccessControl\Authentication;
 
 use Override;
 use LesHttp\Middleware\Authentication\Adapter\AuthenticationAdapter;
