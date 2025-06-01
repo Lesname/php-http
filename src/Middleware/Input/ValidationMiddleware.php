@@ -60,7 +60,7 @@ final class ValidationMiddleware implements MiddlewareInterface
                 json_encode(
                     new ErrorResponse(
                         'Invalid parameters provided',
-                        'invalidBody',
+                        'body.invalid',
                         $this->toData($result, $locale),
                     ),
                     flags: JSON_THROW_ON_ERROR,
