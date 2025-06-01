@@ -16,4 +16,9 @@ interface Route
     public function getOption(string $key): mixed;
 
     public function hasOption(string $key): bool;
+
+    /**
+     * @return array<mixed>
+     */
+    public function toArray(): array;
 }

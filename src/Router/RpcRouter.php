@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LesHttp\Router;
 
+use Override;
 use LesHttp\Router\Route\Route;
 use LesHttp\Router\Route\ArrayRoute;
 use Psr\Http\Message\RequestInterface;
@@ -16,6 +17,7 @@ final class RpcRouter implements Router
     public function __construct(private readonly array $routes)
     {}
 
+    #[Override]
     public function match(RequestInterface $request): ?Route
     {
         $method = strtolower($request->getMethod());

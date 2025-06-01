@@ -5,6 +5,9 @@ namespace LesHttp\Middleware\Authorization;
 
 use Override;
 use JsonException;
+use LesHttp\Router\Route\Route;
+use LesHttp\Middleware\Exception\NoRouteSet;
+use LesHttp\Router\Route\Exception\OptionNotSet;
 use LesHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
 use LesHttp\Response\ErrorResponse;
 use Psr\Container\ContainerExceptionInterface;
@@ -19,64 +22,54 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
-    /**
-     * @param array<string, array<string>> $authorizations
-     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly ContainerInterface $container,
-        private readonly array $authorizations,
     ) {}
 
     /**
-     * @return array<string, array<string>>
-     */
-    public function getAuthorizations(): array
-    {
-        return $this->authorizations;
-    }
-
-    /**
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws JsonException
+     * @throws NoRouteSet
+     * @throws NotFoundExceptionInterface
+     * @throws OptionNotSet
      */
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $method = $request->getMethod();
-        $path = $request->getUri()->getPath();
-        $key = "{$method}:{$path}";
+        $route = $request->getAttribute('route');
 
-        if (isset($this->authorizations[$key])) {
-            $authorizations = $this->authorizations[$key];
+        if (!$route instanceof Route) {
+            throw new NoRouteSet();
+        }
 
-            if (!$this->isAllowed($request, $authorizations)) {
-                $stream = $this->streamFactory->createStream(
-                    json_encode(
-                        new ErrorResponse(
-                            'Not authorized to execute request',
-                            'notAuthorized',
-                        ),
-                        flags: JSON_THROW_ON_ERROR,
+        $authorizations = $route->getOption('authorizations');
+        assert(is_array($authorizations));
+
+        if (!$this->isAllowed($request, $authorizations)) {
+            $stream = $this->streamFactory->createStream(
+                json_encode(
+                    new ErrorResponse(
+                        'Not authorized to execute request',
+                        'notAuthorized',
                     ),
-                );
+                    flags: JSON_THROW_ON_ERROR,
+                ),
+            );
 
-                return $this
-                    ->responseFactory
-                    ->createResponse(403)
-                    ->withAddedHeader('content-type', 'application/json')
-                    ->withBody($stream);
-            }
+            return $this
+                ->responseFactory
+                ->createResponse(403)
+                ->withAddedHeader('content-type', 'application/json')
+                ->withBody($stream);
         }
 
         return $handler->handle($request);
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param array<string> $authorizations
+     * @param array<mixed> $authorizations
      *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -84,6 +77,8 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     private function isAllowed(ServerRequestInterface $request, array $authorizations): bool
     {
         foreach ($authorizations as $authorization) {
+            assert(is_string($authorization));
+
             $constraint = $this->container->get($authorization);
             assert($constraint instanceof AuthorizationConstraint);
 

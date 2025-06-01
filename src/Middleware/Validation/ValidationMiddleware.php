@@ -7,7 +7,10 @@ use Override;
 use JsonException;
 use NumberFormatter;
 use Psr\Log\LoggerInterface;
+use LesHttp\Router\Route\Route;
 use LesValidator\ValidateResult;
+use LesHttp\Middleware\Exception\NoRouteSet;
+use LesHttp\Router\Route\Exception\OptionNotSet;
 use LesDocumentor\Route\Input\RouteInputDocumentor;
 use LesHttp\Response\ErrorResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,9 +30,6 @@ use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
 final class ValidationMiddleware implements MiddlewareInterface
 {
-    /**
-     * @param array<string, array<mixed>> $routes
-     */
     public function __construct(
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
@@ -38,8 +38,8 @@ final class ValidationMiddleware implements MiddlewareInterface
         private readonly ContainerInterface $container,
         private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
-        private readonly array $routes,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws ContainerExceptionInterface
@@ -51,31 +51,27 @@ final class ValidationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $validator = $this->getValidatorFromRequest($request);
-        $body = $request->getParsedBody();
+        $result = $validator->validate($request->getParsedBody());
 
-        if ($validator) {
-            $result = $validator->validate($body);
+        if (!$result->isValid()) {
+            $locale = $this->getPreferredLanguage($request);
 
-            if (!$result->isValid()) {
-                $locale = $this->getPreferredLanguage($request);
-
-                $stream = $this->streamFactory->createStream(
-                    json_encode(
-                        new ErrorResponse(
-                            'Invalid parameters provided',
-                            'invalidBody',
-                            $this->toData($result, $locale),
-                        ),
-                        flags: JSON_THROW_ON_ERROR,
+            $stream = $this->streamFactory->createStream(
+                json_encode(
+                    new ErrorResponse(
+                        'Invalid parameters provided',
+                        'invalidBody',
+                        $this->toData($result, $locale),
                     ),
-                );
+                    flags: JSON_THROW_ON_ERROR,
+                ),
+            );
 
-                return $this
-                    ->responseFactory
-                    ->createResponse(422)
-                    ->withHeader('content-type', 'application/json')
-                    ->withBody($stream);
-            }
+            return $this
+                ->responseFactory
+                ->createResponse(422)
+                ->withHeader('content-type', 'application/json')
+                ->withBody($stream);
         }
 
         return $handler->handle($request);
@@ -106,7 +102,7 @@ final class ValidationMiddleware implements MiddlewareInterface
         if ($result instanceof ValidateResult\Collection\ItemsValidateResult) {
             return [
                 'items' => array_map(
-                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    fn(ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
                     $result->items,
                 ),
             ];
@@ -115,7 +111,7 @@ final class ValidationMiddleware implements MiddlewareInterface
         if ($result instanceof ValidateResult\Composite\PropertiesValidateResult) {
             return [
                 'properties' => array_map(
-                    fn (ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
+                    fn(ValidateResult\ValidateResult $item): mixed => $this->toData($item, $locale),
                     $result->properties,
                 ),
             ];
@@ -151,13 +147,13 @@ final class ValidationMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @throws ContainerExceptionInterface
+     * @throws NoRouteSet
      * @throws NotFoundExceptionInterface
+     * @throws OptionNotSet
+     * @throws ContainerExceptionInterface
      * @throws InvalidArgumentException
-     *
-     * @psalm-suppress MixedAssignment
      */
-    private function getValidatorFromRequest(ServerRequestInterface $request): ?Validator
+    private function getValidatorFromRequest(ServerRequestInterface $request): Validator
     {
         $routeKey = "{$request->getMethod()}:{$request->getUri()->getPath()}";
         $cacheKey = md5("validator:{$routeKey}");
@@ -168,48 +164,39 @@ final class ValidationMiddleware implements MiddlewareInterface
             return $cached;
         }
 
-        $routeSettings = $this->getRouteSettings($request);
+        $route = $request->getAttribute('route');
 
-        if ($routeSettings === null) {
-            return null;
+        if (!$route instanceof Route) {
+            throw new NoRouteSet();
         }
 
-        $validator = $this->getValidatorFromRoute($routeSettings);
+        $validator = $this->getValidatorFromRoute($route);
         $this->cache->set($cacheKey, $validator);
 
         return $validator;
     }
 
     /**
-     * @param array<mixed> $routeSettings
-     *
+     * @throws OptionNotSet
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function getValidatorFromRoute(array $routeSettings): Validator
+    private function getValidatorFromRoute(Route $route): Validator
     {
-        if (isset($routeSettings['validator'])) {
-            assert(is_string($routeSettings['validator']));
+        if ($route->hasOption('validator')) {
+            $optionValidator = $route->getOption('validator');
 
-            $validator = $this->container->get($routeSettings['validator']);
+            assert(is_string($optionValidator));
+
+            $validator = $this->container->get($optionValidator);
             assert($validator instanceof Validator);
 
             return $validator;
         }
 
-        $document = $this->routeInputDocumentor->document($routeSettings);
+        $document = $this->routeInputDocumentor->document($route->toArray());
 
         return (new TypeDocumentValidatorBuilder($document))
             ->build();
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    private function getRouteSettings(ServerRequestInterface $request): ?array
-    {
-        $routeKey = "{$request->getMethod()}:{$request->getUri()->getPath()}";
-
-        return $this->routes[$routeKey] ?? null;
     }
 }

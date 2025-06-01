@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LesHttpTest\Middleware\Authorization;
 
+use LesHttp\Router\Route\Route;
 use LesHttp\Middleware\Authorization\AuthorizationMiddleware;
 use LesHttp\Middleware\Authorization\Constraint\AuthorizationConstraint;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +31,25 @@ final class AuthorizationMiddlewareTest extends TestCase
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
 
         $request = $this->createMock(ServerRequestInterface::class);
+
+        $constraint = $this->createMock(AuthorizationConstraint::class);
+        $constraint
+            ->expects(self::once())
+            ->method('isAllowed')
+            ->with($request)
+            ->willReturn(true);
+
+        $route = $this->createMock(Route::class);
+        $route
+            ->method('getOption')
+            ->with('authorizations')
+            ->willReturn([$constraint::class]);
+
+        $request
+            ->method('getAttribute')
+            ->with('route')
+            ->willReturn($route);
+
         $request
             ->method('getUri')
             ->willReturn($uri);
@@ -47,13 +67,6 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
-        $constraint = $this->createMock(AuthorizationConstraint::class);
-        $constraint
-            ->expects(self::once())
-            ->method('isAllowed')
-            ->with($request)
-            ->willReturn(true);
-
         $container = $this->createMock(ContainerInterface::class);
         $container
             ->method('get')
@@ -66,11 +79,6 @@ final class AuthorizationMiddlewareTest extends TestCase
             $responseFactory,
             $streamFactory,
             $container,
-            [
-                'POST:/foo' => [
-                    $constraint::class,
-                ],
-            ],
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
@@ -137,15 +145,21 @@ final class AuthorizationMiddlewareTest extends TestCase
             ->with(403)
             ->willReturn($response);
 
+        $route = $this->createMock(Route::class);
+        $route
+            ->method('getOption')
+            ->with('authorizations')
+            ->willReturn([$constraint::class]);
+
+        $request
+            ->method('getAttribute')
+            ->with('route')
+            ->willReturn($route);
+
         $middleware = new AuthorizationMiddleware(
             $responseFactory,
             $streamFactory,
             $container,
-            [
-                'POST:/foo' => [
-                    $constraint::class,
-                ],
-            ],
         );
 
         self::assertSame($response, $middleware->process($request, $handler));
