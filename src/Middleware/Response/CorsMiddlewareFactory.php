@@ -10,9 +10,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 
-/**
- * @deprecated use Response\CorsMiddlewareFactory
- */
 final class CorsMiddlewareFactory
 {
     /**
