@@ -76,7 +76,7 @@ final class ConditionMiddleware implements MiddlewareInterface
 
                 return $this
                     ->responseFactory
-                    ->createResponse(409)
+                    ->createResponse($result->getCategory()->getHttpCode())
                     ->withHeader('content-type', 'application/json')
                     ->withBody($this->streamFactory->createStream($json));
             }
