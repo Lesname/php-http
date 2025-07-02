@@ -11,4 +11,6 @@ use JsonSerializable;
 interface ConditionConstraintResult extends JsonSerializable
 {
     public function isSatisfied(): bool;
+
+    public function getCategory(): ResultCategory;
 }

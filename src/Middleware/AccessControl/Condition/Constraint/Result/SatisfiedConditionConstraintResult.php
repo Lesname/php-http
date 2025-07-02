@@ -17,6 +17,12 @@ final class SatisfiedConditionConstraintResult implements ConditionConstraintRes
     }
 
     #[Override]
+    public function getCategory(): ResultCategory
+    {
+        return ResultCategory::Ok;
+    }
+
+    #[Override]
     public function jsonSerialize(): mixed
     {
         return null;
