@@ -6,7 +6,7 @@ namespace LesHttp\Middleware\AccessControl\Authorization\Constraint;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class GuestAuthorizationConstraint implements AuthorizationConstraint
+final class GuestAuthorizationConstraint implements AuthorizationConstraint
 {
     #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
