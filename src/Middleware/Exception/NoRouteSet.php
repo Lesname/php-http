@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LesHttp\Middleware\Exception;
 
-use Exception;
+use LesHttp\Exception\AbstractHttpException;
 
 /**
  * @psalm-immutable
  */
-final class NoRouteSet extends Exception
+final class NoRouteSet extends AbstractHttpException
 {
 }

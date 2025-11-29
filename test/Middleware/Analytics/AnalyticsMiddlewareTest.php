@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LesHttpTest\Middleware\Analytics;
@@ -6,7 +7,6 @@ namespace LesHttpTest\Middleware\Analytics;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
-use LesDatabase\Query\Builder\Helper\LabelHelper;
 use LesHttp\Middleware\Analytics\AnalyticsMiddleware;
 use LesValueObject\Composite\ForeignReference;
 use LesValueObject\Number\Int\Date\MilliTimestamp;
@@ -82,8 +82,7 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $builder
             ->expects(self::exactly(9))
-            ->method('setParameter')
-            ->willReturn($builder);
+            ->method('createNamedParameter');
 
         $builder
             ->expects(self::exactly(9))
@@ -174,8 +173,7 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $builder
             ->expects(self::exactly(9))
-            ->method('setParameter')
-            ->willReturn($builder);
+            ->method('createNamedParameter');
 
         $builder
             ->expects(self::exactly(9))
@@ -280,8 +278,7 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
         $builder
             ->expects(self::exactly(9))
-            ->method('setParameter')
-            ->willReturn($builder);
+            ->method('createNamedParameter');
 
         $builder
             ->expects(self::exactly(9))
@@ -389,18 +386,9 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $e = new Exception('Fiz biz');
 
-        $error = json_encode(
-            [
-                'throwable' => $e->getMessage(),
-                'class' => get_debug_type($e),
-            ],
-            JSON_THROW_ON_ERROR,
-        );
-
         $builder
             ->expects(self::exactly(9))
-            ->method('setParameter')
-            ->willReturn($builder);
+            ->method('createNamedParameter');
 
         $builder
             ->expects(self::exactly(9))
