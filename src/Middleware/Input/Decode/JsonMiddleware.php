@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LesHttp\Middleware\Input\Decode;
 
 use Override;
 use JsonException;
-use LesHttp\Response\ErrorResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use LesHttp\Middleware\Response\Response\ErrorResponse;
 
 final class JsonMiddleware implements MiddlewareInterface
 {

@@ -1,23 +1,24 @@
 <?php
+
 declare(strict_types=1);
 
 namespace LesHttp\Middleware\AccessControl\Throttle;
 
 use Override;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
+use Throwable;
 use JsonException;
-use LesHttp\Middleware\AccessControl\Throttle\Parameter\By;
-use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
-use LesHttp\Response\ErrorResponse;
-use LesValueObject\Composite\ForeignReference;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Connection;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Throwable;
+use LesValueObject\Composite\ForeignReference;
+use Psr\Http\Message\ResponseFactoryInterface;
+use LesHttp\Middleware\Response\Response\ErrorResponse;
+use LesHttp\Middleware\AccessControl\Throttle\Parameter\By;
+use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 
 final class ThrottleMiddleware implements MiddlewareInterface
 {
@@ -112,7 +113,7 @@ coalesce(
 )
 SQL;
 
-        $now = (int)floor(microtime(true) * 1_000);
+        $now = (int)floor(microtime(true) * 1_000.0);
 
         $builder = $this->connection->createQueryBuilder();
         $builder->select($pointSelect)->from('throttle_request');
@@ -209,7 +210,7 @@ SQL;
                     'action' => $this->getActionFromRequest($request),
                     'identity' => $this->getIdentityFromRequest($request),
                     'ip' => $this->getIpFromRequest($request),
-                    'requested_on' => (int)floor(microtime(true) * 1000),
+                    'requested_on' => (int)floor(microtime(true) * 1000.0),
                     'response' => $response ? $response->getStatusCode() : 500,
                 ],
             )
