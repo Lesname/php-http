@@ -9,6 +9,7 @@ use Throwable;
 use JsonException;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Connection;
+use LesHttp\Response\ErrorResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,7 +17,6 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use LesValueObject\Composite\ForeignReference;
 use Psr\Http\Message\ResponseFactoryInterface;
-use LesHttp\Middleware\Response\Response\ErrorResponse;
 use LesHttp\Middleware\AccessControl\Throttle\Parameter\By;
 use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 

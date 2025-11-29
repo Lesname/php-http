@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use LesHttp\Router\Route\Route;
 use LesValidator\ValidateResult;
 use Psr\SimpleCache\CacheInterface;
+use LesHttp\Response\ErrorResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -27,7 +28,6 @@ use LesHttp\Router\Route\Exception\OptionNotSet;
 use LesDocumentor\Route\Input\RouteInputDocumentor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use LesValidator\Builder\TypeDocumentValidatorBuilder;
-use LesHttp\Middleware\Response\Response\ErrorResponse;
 
 final class ValidationMiddleware implements MiddlewareInterface
 {

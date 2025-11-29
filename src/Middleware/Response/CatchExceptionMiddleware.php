@@ -8,13 +8,13 @@ use Override;
 use Throwable;
 use JsonException;
 use Psr\Log\LoggerInterface;
+use LesHttp\Response\ErrorResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
-use LesHttp\Middleware\Response\Response\ErrorResponse;
 
 final class CatchExceptionMiddleware implements MiddlewareInterface
 {

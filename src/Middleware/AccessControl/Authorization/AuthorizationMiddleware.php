@@ -7,6 +7,7 @@ namespace LesHttp\Middleware\AccessControl\Authorization;
 use Override;
 use JsonException;
 use LesHttp\Router\Route\Route;
+use LesHttp\Response\ErrorResponse;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,7 +19,6 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use LesHttp\Router\Route\Exception\OptionNotSet;
-use LesHttp\Middleware\Response\Response\ErrorResponse;
 use LesHttp\Middleware\AccessControl\Authorization\Constraint\AuthorizationConstraint;
 
 final class AuthorizationMiddleware implements MiddlewareInterface

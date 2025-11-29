@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LesHttp\Middleware\Response\Response;
+namespace LesHttp\Response;
 
 use LesValueObject\Composite\AbstractCompositeValueObject;
 
 /**
  * @psalm-immutable
- *
- * @deprecated use base Response namespace
  */
 final class ErrorResponse extends AbstractCompositeValueObject
 {
