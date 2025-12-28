@@ -60,7 +60,7 @@ final class ValidationMiddleware implements MiddlewareInterface
             $stream = $this->streamFactory->createStream(
                 json_encode(
                     new ErrorResponse(
-                        'Invalid parameters provided',
+                        $this->translator->trans('http.body.invalid', locale: $locale),
                         'body.invalid',
                         $this->toData($result, $locale),
                     ),
