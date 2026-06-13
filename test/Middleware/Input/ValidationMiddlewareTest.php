@@ -190,10 +190,14 @@ final class ValidationMiddlewareTest extends TestCase
 
         $translator = $this->createMock(TranslatorInterface::class);
         $translator
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('trans')
-            ->with('validation.fiz', ['%foo%' => 'biz'], null, 'nl_NL')
-            ->willReturn('bar');
+            ->willReturnMap(
+                [
+                    ['http.body.invalid', [], null, 'nl_NL', 'Invalid parameters provided'],
+                    ['validation.fiz', ['%foo%' => 'biz'], null, 'nl_NL', 'bar'],
+                ],
+            );
 
         $translator
             ->method('getLocale')
