@@ -22,6 +22,60 @@ use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 
 final class ThrottleMiddleware implements MiddlewareInterface
 {
+    private const string SELECT_HISTORY_USAGE_QUERY = <<<'SQL'
+greatest(
+    coalesce(
+        sum(
+            (
+                (
+                    case 
+                        when floor(response / 100) = 4 then 1 
+                        else 0 end
+                ) 
+                * 
+                4
+            ) 
+            + 
+            (
+                (
+                    case 
+                        when floor(response / 100) != 4 then 1 
+                        else 0
+                    end
+                )
+            )
+        ),
+        0
+    ) / 4, 
+    500
+) * :usage_modifier
+SQL;
+
+    private const string SELECT_CURRENT_USAGE_QUERY = <<<'SQL'
+coalesce(
+    sum(
+        (
+            (
+                case 
+                    when floor(response / 100) = 4 then 1 
+                    else 0 
+                end
+            ) * 4
+        ) 
+        + 
+        (
+            (
+                case 
+                    when floor(response / 100) != 4 then 1 
+                    else 0 
+                end
+            )
+        )
+    ), 
+    0
+)
+SQL;
+
     /**
      * @param array<array{duration: int, points: int, action?: string, by?: By}> $limits
      */
@@ -109,7 +163,7 @@ coalesce(
             else 5
         end
     ),
-    '0'
+    9
 )
 SQL;
 
@@ -173,22 +227,27 @@ SQL;
         $builder->from('throttle_request', 'tr');
 
         $historyUsageBuilder = clone $builder;
-        $historyUsageBuilder->select("greatest(coalesce(sum(((floor(response / 100) = 4) * 4) + ((floor(response / 100) != 4))), 0) / 4, 500) * {$this->usageModifier}");
+        $historyUsageBuilder->select(self::SELECT_HISTORY_USAGE_QUERY);
+        $historyUsageBuilder->setParameter('usage_modifier', $this->usageModifier);
 
         $currentUsageBuilder = clone $builder;
-        $currentUsageBuilder->select('coalesce(sum(((floor(response / 100) = 4) * 4) + ((floor(response / 100) != 4))), 0)');
+        $currentUsageBuilder->select(self::SELECT_CURRENT_USAGE_QUERY);
+        $currentUsageBuilder->setParameter('till', (time() - 900) * 1000);
 
-        $currentUsageBuilder->andWhere('tr.requested_on >= (UNIX_TIMESTAMP() - 900) * 1000');
+        $currentUsageBuilder->andWhere('tr.requested_on >= :till');
 
         for ($day = 1; $day <= 7; $day += 1) {
             $whereRange = <<<SQL
 (
-    tr.requested_on >= (UNIX_TIMESTAMP() - (86400 * {$day}) - 900) * 1000
+    tr.requested_on >= :day_{$day}_greater 
     AND
-    tr.requested_on <= (UNIX_TIMESTAMP() - (86400 * {$day}) + 900) * 1000
+    tr.requested_on <= :day_{$day}_lower 
 )
 SQL;
             $historyUsageBuilder->orWhere($whereRange);
+
+            $historyUsageBuilder->setParameter("day_{$day}_greater", (time() - (86400 * $day) - 900) * 1000);
+            $historyUsageBuilder->setParameter("day_{$day}_lower", (time() - (86400 * $day) + 900) * 1000);
         }
 
         return $historyUsageBuilder->fetchOne() <= $currentUsageBuilder->fetchOne();
