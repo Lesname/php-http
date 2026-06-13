@@ -194,7 +194,7 @@ final class ValidationMiddlewareTest extends TestCase
             ->method('trans')
             ->willReturnMap(
                 [
-                    ['body.invalid', null, null, 'nl_NL', 'Invalid parameters provided'],
+                    ['http.body.invalid', [], null, 'nl_NL', 'Invalid parameters provided'],
                     ['validation.fiz', ['%foo%' => 'biz'], null, 'nl_NL', 'bar'],
                 ],
             );
