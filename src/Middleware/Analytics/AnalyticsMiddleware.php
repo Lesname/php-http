@@ -25,6 +25,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         private readonly Connection $connection,
         private readonly string $service,
         private readonly ?MilliTimestamp $now = null,
+        private readonly string $ipField = 'REMOTE_ADDR',
     ) {}
 
     /**
@@ -125,7 +126,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
 
     private function getIpFromRequest(ServerRequestInterface $request): ?string
     {
-        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? null;
+        $ip = $request->getServerParams()[$this->ipField] ?? null;
         assert(is_string($ip) || is_null($ip));
 
         return $ip;

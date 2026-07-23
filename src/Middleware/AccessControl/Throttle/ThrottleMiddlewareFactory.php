@@ -37,6 +37,10 @@ final class ThrottleMiddlewareFactory
         $limits = $settings['limits'];
         /** @var array<array{duration: int, points: int}> $limits */
 
+        $ipField = isset($settings['ipField']) && is_string($settings['ipField'])
+            ? $settings['ipField']
+            : 'REMOTE_ADDR';
+
         $usageModifier = $settings['usageModifier'] ?? 25;
         assert(is_int($usageModifier));
 
@@ -46,6 +50,7 @@ final class ThrottleMiddlewareFactory
             $connection,
             $limits,
             $usageModifier,
+            $ipField,
         );
     }
 }

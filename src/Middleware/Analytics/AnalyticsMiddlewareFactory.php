@@ -30,10 +30,19 @@ final class AnalyticsMiddlewareFactory
         assert(is_array($config['databases']));
         assert(is_array($config['databases']['analytics']));
 
+        $ipField = 'REMOTE_ADDR';
+
+        if (isset($config[AnalyticsMiddleware::class]) && is_array($config[AnalyticsMiddleware::class])) {
+            if (isset($config[AnalyticsMiddleware::class]['ipField']) && is_string($config[AnalyticsMiddleware::class]['ipField'])) {
+                $ipField = $config[AnalyticsMiddleware::class]['ipField'];
+            }
+        }
+
         return new AnalyticsMiddleware(
             // @phpstan-ignore argument.type
             DriverManager::getConnection($config['databases']['analytics']),
             $config['self']['name'],
+            ipField: $ipField,
         );
     }
 }
