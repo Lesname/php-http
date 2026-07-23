@@ -33,8 +33,8 @@ final class AnalyticsMiddlewareFactory
         $ipField = 'REMOTE_ADDR';
 
         if (isset($config[AnalyticsMiddleware::class]) && is_array($config[AnalyticsMiddleware::class])) {
-            if (isset($config[AnalyticsMiddleware::class]['ipField']) && is_string($config[AnalyticsMiddleware::class])) {
-                $ipField = $config[AnalyticsMiddleware::class];
+            if (isset($config[AnalyticsMiddleware::class]['ipField']) && is_string($config[AnalyticsMiddleware::class]['ipField'])) {
+                $ipField = $config[AnalyticsMiddleware::class]['ipField'];
             }
         }
 
@@ -42,7 +42,7 @@ final class AnalyticsMiddlewareFactory
             // @phpstan-ignore argument.type
             DriverManager::getConnection($config['databases']['analytics']),
             $config['self']['name'],
-            $ipField,
+            ipField: $ipField,
         );
     }
 }
