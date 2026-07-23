@@ -85,6 +85,7 @@ SQL;
         private readonly Connection $connection,
         private readonly array $limits,
         private readonly int $usageModifier,
+        private readonly string $ipField = 'REMOTE_ADDR',
     ) {
         assert(count($limits) > 0);
     }
@@ -302,7 +303,7 @@ SQL;
 
     private function getIpFromRequest(ServerRequestInterface $request): ?string
     {
-        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? null;
+        $ip = $request->getServerParams()[$this->ipField] ?? null;
         assert(is_string($ip) || is_null($ip));
 
         return $ip;
