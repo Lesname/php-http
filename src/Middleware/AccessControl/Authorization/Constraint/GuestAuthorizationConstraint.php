@@ -12,6 +12,6 @@ final class GuestAuthorizationConstraint implements AuthorizationConstraint
     #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
     {
-        return $request->getAttribute('identity') === null;
+        return $request->getAttribute('identity.reference') === null;
     }
 }

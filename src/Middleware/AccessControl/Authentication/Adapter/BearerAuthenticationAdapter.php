@@ -6,6 +6,7 @@ namespace LesHttp\Middleware\AccessControl\Authentication\Adapter;
 
 use Override;
 use LesToken\Codec\TokenCodec;
+use LesValueObject\Composite\DynamicCompositeValueObject;
 use LesValueObject\Composite\Exception\CannotParseReference;
 use LesValueObject\Composite\ForeignReference;
 use LesValueObject\String\Exception\TooLong;
@@ -30,7 +31,7 @@ REGEXP;
      * @throws NotFormat
      */
     #[Override]
-    public function resolve(ServerRequestInterface $request): ?ForeignReference
+    public function resolve(ServerRequestInterface $request): ?Identity
     {
         $header = $request->getHeaderLine('authorization');
 
@@ -45,10 +46,12 @@ REGEXP;
                 return null;
             }
 
-            if (isset($claims['identity'])) {
-                assert(is_string($claims['identity']));
-
-                return ForeignReference::fromString($claims['identity']);
+            if (isset($claims['sub']) && is_string($claims['sub'])) {
+                return new Identity(
+                    ForeignReference::fromString($claims['sub']),
+                    // @phpstan-ignore argument.type
+                    new DynamicCompositeValueObject($claims),
+                );
             }
         }
 
