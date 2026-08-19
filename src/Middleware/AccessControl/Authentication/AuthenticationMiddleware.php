@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use LesHttp\Middleware\AccessControl\Authentication\Adapter\Identity;
 use LesHttp\Middleware\AccessControl\Authentication\Adapter\AuthenticationAdapter;
 
 final class AuthenticationMiddleware implements MiddlewareInterface
@@ -23,10 +24,13 @@ final class AuthenticationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         foreach ($this->adapters as $adapter) {
-            $result = $adapter->resolve($request);
+            $identity = $adapter->resolve($request);
 
-            if ($result) {
-                $request = $request->withAttribute('identity', $result);
+            if ($identity instanceof Identity) {
+                $request = $request
+                    ->withAttribute('identity', $identity->reference)
+                    ->withAttribute('identity.reference', $identity->reference)
+                    ->withAttribute('identity.context', $identity->context);
 
                 break;
             }

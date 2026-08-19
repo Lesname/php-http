@@ -16,7 +16,7 @@ abstract class AbstractIdentityAuthorizationConstraint implements AuthorizationC
     #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
     {
-        $identity = $request->getAttribute('identity');
+        $identity = $request->getAttribute('identity.reference');
 
         return $identity instanceof ForeignReference
             && $this->isIdentityAllowed($request, $identity);

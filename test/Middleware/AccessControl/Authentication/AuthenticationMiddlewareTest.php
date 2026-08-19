@@ -9,6 +9,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use LesValueObject\Composite\ForeignReference;
+use LesValueObject\Composite\DynamicCompositeValueObject;
+use LesHttp\Middleware\AccessControl\Authentication\Adapter\Identity;
 use LesHttp\Middleware\AccessControl\Authentication\AuthenticationMiddleware;
 use LesHttp\Middleware\AccessControl\Authentication\Adapter\AuthenticationAdapter;
 
@@ -41,13 +43,22 @@ final class AuthenticationMiddlewareTest extends TestCase
 
     public function testResolve(): void
     {
+        $context = new DynamicCompositeValueObject([]);
         $reference = ForeignReference::fromString('abc/9cd78005-5c15-40a3-8dd5-6836cee2ee81');
+
+        $identity = new Identity($reference, $context);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
-            ->expects(self::once())
+            ->expects(self::exactly(3))
             ->method('withAttribute')
-            ->with('identity', $reference)
+            ->willReturnMap(
+                [
+                    ['identity', $identity->reference],
+                    ['identity.reference', $identity->reference],
+                    ['identity.context', $identity->context],
+                ],
+            )
             ->willReturn($request);
 
         $adapter = $this->createMock(AuthenticationAdapter::class);
@@ -55,7 +66,7 @@ final class AuthenticationMiddlewareTest extends TestCase
             ->expects(self::once())
             ->method('resolve')
             ->with($request)
-            ->willReturn($reference);
+            ->willReturn($identity);
 
         $response = $this->createMock(ResponseInterface::class);
 
