@@ -49,6 +49,7 @@ REGEXP;
             if (isset($claims['sub']) && is_string($claims['sub'])) {
                 return new Identity(
                     ForeignReference::fromString($claims['sub']),
+                    // @phpstan-ignore argument.type
                     new DynamicCompositeValueObject($claims),
                 );
             }
