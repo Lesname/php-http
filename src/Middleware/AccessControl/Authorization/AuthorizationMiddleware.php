@@ -19,7 +19,10 @@ use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use LesHttp\Router\Route\Exception\OptionNotSet;
+use LesHttp\Middleware\AccessControl\Authorization\Exception\UnhandledConstraint;
+use LesHttp\Middleware\AccessControl\Authorization\Constraint\Chain\ChainOperator;
 use LesHttp\Middleware\AccessControl\Authorization\Constraint\AuthorizationConstraint;
+use LesHttp\Middleware\AccessControl\Authorization\Constraint\Chain\AuthorizationConstraintChain;
 
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
@@ -35,6 +38,7 @@ final class AuthorizationMiddleware implements MiddlewareInterface
      * @throws NoRouteSet
      * @throws NotFoundExceptionInterface
      * @throws OptionNotSet
+     * @throws UnhandledConstraint
      */
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -48,16 +52,18 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         $authorizations = $route->getOption('authorizations');
         assert(is_array($authorizations));
 
-        if (!$this->isAllowed($request, $authorizations)) {
-            $stream = $this->streamFactory->createStream(
-                json_encode(
-                    new ErrorResponse(
-                        'Not authorized to execute request',
-                        'notAuthorized',
+        if (!$this->isAnyAllowed($request, $authorizations)) {
+            $stream = $this
+                ->streamFactory
+                ->createStream(
+                    json_encode(
+                        new ErrorResponse(
+                            'Not authorized to execute request',
+                            'notAuthorized',
+                        ),
+                        flags: JSON_THROW_ON_ERROR,
                     ),
-                    flags: JSON_THROW_ON_ERROR,
-                ),
-            );
+                );
 
             return $this
                 ->responseFactory
@@ -70,24 +76,58 @@ final class AuthorizationMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param array<mixed> $authorizations
+     * @param array<mixed> $constraints
      *
+     * @throws UnhandledConstraint
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    private function isAllowed(ServerRequestInterface $request, array $authorizations): bool
+    private function isAnyAllowed(ServerRequestInterface $request, array $constraints): bool
     {
-        foreach ($authorizations as $authorization) {
-            assert(is_string($authorization));
+        var_dump(
+            $constraints[0]::class
+        );
 
-            $constraint = $this->container->get($authorization);
-            assert($constraint instanceof AuthorizationConstraint);
+        return array_any($constraints, fn($constraint) => $this->isConstraintAllowed($request, $constraint));
+    }
 
-            if ($constraint->isAllowed($request)) {
-                return true;
-            }
+    /**
+     * @param array<mixed> $constraints
+     *
+     * @throws UnhandledConstraint
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    private function areAllAllowed(ServerRequestInterface $request, array $constraints): bool
+    {
+        return array_all($constraints, fn($constraint) => $this->isConstraintAllowed($request, $constraint));
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws UnhandledConstraint
+     */
+    private function isConstraintAllowed(ServerRequestInterface $request, mixed $constraint): bool
+    {
+        if (is_string($constraint)) {
+            $constraint = $this->container->get($constraint);
         }
 
-        return false;
+        if ($constraint instanceof AuthorizationConstraint) {
+            return $constraint->isAllowed($request);
+        }
+
+        if ($constraint instanceof AuthorizationConstraintChain) {
+            echo PHP_EOL;
+            var_dump($constraint->operator);
+
+            return match ($constraint->operator) {
+                ChainOperator::And => $this->areAllAllowed($request, $constraint->constraints),
+                ChainOperator::Or => $this->isAnyAllowed($request, $constraint->constraints),
+            };
+        }
+
+        throw new UnhandledConstraint($constraint);
     }
 }
