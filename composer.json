@@ -2,7 +2,7 @@
   "name": "lesname/http",
   "license": "MIT",
   "require": {
-    "php": "^8.4.0",
+    "php": "^8.5.0",
     "ext-ctype": "*",
 
     "lesname/validator": "^0.6.0",
@@ -12,7 +12,7 @@
     "psr/http-server-middleware": "^1.0.0",
     "psr/http-factory": "^1.0.0",
 
-    "symfony/translation": "^7.0.0 || ^8.0.0"
+    "symfony/translation": "^8.0.0"
   },
   "require-dev": {
     "ext-intl": "*",
@@ -20,7 +20,7 @@
     "lesname/token": "^0.4.0",
 
     "squizlabs/php_codesniffer": "^4.0.0",
-    "phpunit/phpunit": "^12.0.0",
+    "phpunit/phpunit": "^13.0.0",
 
     "phpstan/phpstan": "^2.0.0",
     "phpstan/extension-installer": "^1.4.0",
