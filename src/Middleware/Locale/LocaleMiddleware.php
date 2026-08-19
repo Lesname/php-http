@@ -71,31 +71,21 @@ final class LocaleMiddleware implements MiddlewareInterface
             }
         }
 
-        $useLocale = $this->defaultLocale;
-
         foreach ($queue as $locale) {
             assert(is_string($locale));
             $length = strlen($locale);
 
             if ($length === 5) {
                 if (in_array($locale, $this->allowedLocales)) {
-                    $useLocale = $locale;
-
-                    break;
+                    return $locale;
                 }
-
-                continue;
-            }
-
-            if ($length === 2) {
+            } elseif ($length === 2) {
                 if (array_key_exists($locale, $this->genericLocales)) {
-                    $useLocale = $this->genericLocales[$locale];
-
-                    break;
+                    return $this->genericLocales[$locale];
                 }
             }
         }
 
-        return $useLocale;
+        return $this->defaultLocale;
     }
 }
