@@ -84,10 +84,6 @@ final class AuthorizationMiddleware implements MiddlewareInterface
      */
     private function isAnyAllowed(ServerRequestInterface $request, array $constraints): bool
     {
-        var_dump(
-            $constraints[0]::class
-        );
-
         return array_any($constraints, fn($constraint) => $this->isConstraintAllowed($request, $constraint));
     }
 
@@ -119,9 +115,6 @@ final class AuthorizationMiddleware implements MiddlewareInterface
         }
 
         if ($constraint instanceof AuthorizationConstraintChain) {
-            echo PHP_EOL;
-            var_dump($constraint->operator);
-
             return match ($constraint->operator) {
                 ChainOperator::And => $this->areAllAllowed($request, $constraint->constraints),
                 ChainOperator::Or => $this->isAnyAllowed($request, $constraint->constraints),
