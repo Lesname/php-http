@@ -10,6 +10,9 @@ use LesHttp\Router\Route\ArrayRoute;
 use Psr\Http\Message\RequestInterface;
 use LesDocumentor\Route\Document\Property\Method;
 
+/**
+ * @todo drop need for post mapping
+ */
 final class RpcRouter implements Router
 {
     /**
