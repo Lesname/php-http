@@ -45,8 +45,10 @@ final class ValidationMiddleware implements MiddlewareInterface
     /**
      * @throws ContainerExceptionInterface
      * @throws InvalidArgumentException
-     * @throws NotFoundExceptionInterface
      * @throws JsonException
+     * @throws NoRouteSet
+     * @throws NotFoundExceptionInterface
+     * @throws OptionNotSet
      */
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
