@@ -21,6 +21,9 @@ use Throwable;
 
 final class AnalyticsMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly Connection $connection,
         private readonly string $service,
@@ -85,7 +88,7 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             }
         }
 
-        $now = $this->now ?? MilliTimestamp::now();
+        $now = $this->now ?? new MilliTimestamp((int)floor(microtime(true) * 1_000.0));
 
         $builder = InsertValuesApplier
             ::forValues(
@@ -154,6 +157,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         $startTime = $request->getServerParams()['REQUEST_TIME_FLOAT'];
         assert(is_float($startTime));
 
-        return (int)floor($startTime * 1000);
+        return (int)floor($startTime * 1000.0);
     }
 }

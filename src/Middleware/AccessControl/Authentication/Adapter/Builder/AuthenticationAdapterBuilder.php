@@ -6,10 +6,15 @@ namespace LesHttp\Middleware\AccessControl\Authentication\Adapter\Builder;
 
 use LesHttp\Middleware\AccessControl\Authentication\Adapter\AuthenticationAdapter;
 
+/**
+ * @psalm-mutable
+ */
 interface AuthenticationAdapterBuilder
 {
     /**
      * @param array<mixed> $config
+     *
+     * @psalm-impure
      */
     public function build(array $config): AuthenticationAdapter;
 }

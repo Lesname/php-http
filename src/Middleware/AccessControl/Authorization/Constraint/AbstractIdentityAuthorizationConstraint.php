@@ -12,6 +12,8 @@ abstract class AbstractIdentityAuthorizationConstraint implements AuthorizationC
 {
     /**
      * @psalm-suppress MixedAssignment
+     *
+     * @psalm-impure
      */
     #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
@@ -22,5 +24,8 @@ abstract class AbstractIdentityAuthorizationConstraint implements AuthorizationC
             && $this->isIdentityAllowed($request, $identity);
     }
 
+    /**
+     * @psalm-impure
+     */
     abstract protected function isIdentityAllowed(ServerRequestInterface $request, ForeignReference $identity): bool;
 }

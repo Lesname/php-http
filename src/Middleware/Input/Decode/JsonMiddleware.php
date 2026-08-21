@@ -18,6 +18,9 @@ final class JsonMiddleware implements MiddlewareInterface
 {
     private const IGNORE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,

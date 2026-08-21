@@ -31,6 +31,9 @@ use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
 final class ValidationMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,

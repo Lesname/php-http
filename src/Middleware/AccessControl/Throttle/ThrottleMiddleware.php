@@ -78,6 +78,8 @@ SQL;
 
     /**
      * @param array<array{duration: int, points: int, action?: string, by?: By}> $limits
+     *
+     * @psalm-mutation-free
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,

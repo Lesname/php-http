@@ -23,6 +23,8 @@
     "squizlabs/php_codesniffer": "^4.0.0",
     "phpunit/phpunit": "^13.0.0",
 
+    "vimeo/psalm": "^7.0.0-beta19",
+
     "phpstan/phpstan": "^2.0.0",
     "phpstan/extension-installer": "^1.4.0",
     "phpstan/phpstan-deprecation-rules": "^2.0.0"

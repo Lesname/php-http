@@ -71,13 +71,17 @@ final class TrimMiddleware implements MiddlewareInterface
         return (object)$this->trimArray(get_object_vars($object));
     }
 
+    /**
+     * @psalm-pure
+     */
     private function trimString(string $string): ?string
     {
-        $string = str_replace(' ', ' ', $string);
-        $string = trim($string);
+        // @phpstan-ignore possiblyImpure.functionCall
+        $new = str_replace(' ', ' ', $string);
+        $new = trim($new);
 
-        return $string !== ''
-            ? $string
+        return $new !== ''
+            ? $new
             : null;
     }
 }

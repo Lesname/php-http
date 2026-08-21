@@ -72,3 +72,18 @@ jobs:
           path: vendor
           key: ${{ github.sha }}-composer85
       - run: ./vendor/bin/phpunit -c phpunit.xml --do-not-cache-result
+  psalm85:
+    runs-on: ubuntu-latest
+    needs: [ composer85 ]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: composer
+      - name: Retrieve cached vendor folder
+        uses: actions/cache@v6
+        with:
+          path: vendor
+          key: ${{ github.sha }}-composer85
+      - run: ./vendor/bin/psalm

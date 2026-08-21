@@ -11,7 +11,13 @@ use JsonSerializable;
  */
 interface ConditionConstraintResult extends JsonSerializable
 {
+    /**
+     * @psalm-pure
+     */
     public function isSatisfied(): bool;
 
+    /**
+     * @psalm-pure
+     */
     public function getCategory(): ResultCategory;
 }

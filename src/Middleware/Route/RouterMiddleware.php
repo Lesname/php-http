@@ -13,6 +13,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class RouterMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(private readonly Router $router)
     {}
 

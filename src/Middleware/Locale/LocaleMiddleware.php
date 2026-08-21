@@ -18,6 +18,8 @@ final class LocaleMiddleware implements MiddlewareInterface
 
     /**
      * @param array<string> $allowedLocales
+     *
+     * @psalm-mutation-free
      */
     public function __construct(
         private readonly string $defaultLocale,

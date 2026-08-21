@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+  <file src="src/Handler/MiddlewarePipelineFactory.php">
+    <MixedAssignment>
+      <code><![CDATA[$handler]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Middleware/AccessControl/Authentication/Adapter/BearerAuthenticationAdapter.php">
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$claims]]></code>
+    </MixedArgumentTypeCoercion>
+  </file>
+  <file src="src/Middleware/AccessControl/Authorization/AuthorizationMiddleware.php">
+    <MixedAssignment>
+      <code><![CDATA[$constraint]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Middleware/Input/ValidationMiddleware.php">
+    <MixedAssignment>
+      <code><![CDATA[$cached]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Middleware/Route/DispatchMiddleware.php">
+    <MixedAssignment>
+      <code><![CDATA[$middleware]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Router/RpcRouterFactory.php">
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$config['routes']]]></code>
+    </MixedArgumentTypeCoercion>
+  </file>
+</files>

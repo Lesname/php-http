@@ -8,8 +8,14 @@ use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use LesValueObject\Composite\ForeignReference;
 
+/**
+ * @psalm-mutable
+ */
 final class SelfAuthorizationConstraint implements AuthorizationConstraint
 {
+    /**
+     * @psalm-impure
+     */
     #[Override]
     public function isAllowed(ServerRequestInterface $request): bool
     {
