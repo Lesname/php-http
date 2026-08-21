@@ -266,17 +266,17 @@ SQL;
         }
 
         $builder = $this->connection->createQueryBuilder();
-        InsertValuesApplier
-            ::forValues(
-                [
-                    'action' => $this->getActionFromRequest($request),
-                    'identity' => $this->getIdentityFromRequest($request),
-                    'ip' => $this->getIpFromRequest($request),
-                    'requested_on' => (int)floor(microtime(true) * 1000.0),
-                    'response' => $response ? $response->getStatusCode() : 500,
-                ],
-            )
-            ->apply($builder)
+        $builder
+            ->setValue('action', ':action')
+            ->setParameter('action', $this->getActionFromRequest($request))
+            ->setValue('identity', ':identity')
+            ->setParameter('identity', $this->getIdentityFromRequest($request))
+            ->setValue('ip', ':ip')
+            ->setParameter('ip', $this->getIpFromRequest($request))
+            ->setValue('requested_on', ':requested_on')
+            ->setParameter('requested_on', (int)floor(microtime(true) * 1000.0))
+            ->setValue('response', ':response')
+            ->setParameter('response', $response ? $response->getStatusCode() : 500)
             ->insert('throttle_request')
             ->executeStatement();
     }
