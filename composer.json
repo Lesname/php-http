@@ -9,8 +9,9 @@
     "psr/simple-cache": "^3.0.0",
     "psr/http-server-middleware": "^1.0.0",
     "psr/http-factory": "^1.0.0",
+    "psr/log": "^3.0.0",
 
-    "symfony/translation": "^8.0.0"
+    "symfony/translation-contracts": "^3.0.0"
   },
   "require-dev": {
     "ext-intl": "*",
