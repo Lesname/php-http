@@ -6,6 +6,8 @@ namespace LesHttp;
 
 /**
  * @psalm-pure
+ *
+ * @deprecated done via ConfigProvider
  */
 final class TranslationHelper
 {
