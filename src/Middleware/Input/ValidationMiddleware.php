@@ -8,7 +8,6 @@ use Override;
 use JsonException;
 use NumberFormatter;
 use LesValidator\Validator;
-use Psr\Log\LoggerInterface;
 use LesHttp\Router\Route\Route;
 use LesValidator\ValidateResult;
 use Psr\SimpleCache\CacheInterface;
@@ -40,7 +39,6 @@ final class ValidationMiddleware implements MiddlewareInterface
         private readonly StreamFactoryInterface $streamFactory,
         private readonly TranslatorInterface $translator,
         private readonly ContainerInterface $container,
-        private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
     ) {
     }
@@ -138,10 +136,6 @@ final class ValidationMiddleware implements MiddlewareInterface
 
             $code = "validation.{$result->code}";
             $message = $this->translator->trans($code, $context, locale: $locale);
-
-            if ($message === $code) {
-                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
-            }
 
             return [
                 'context' => $result->context,
