@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LesHttpTest\Middleware\Input;
 
 use LesValidator\Validator;
-use Psr\Log\LoggerInterface;
 use LesHttp\Router\Route\Route;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
@@ -77,8 +76,6 @@ final class ValidationMiddlewareTest extends TestCase
 
         $translator = $this->createMock(TranslatorInterface::class);
 
-        $logger = $this->createMock(LoggerInterface::class);
-
         $cache = $this->createMock(CacheInterface::class);
         $cache
             ->expects(self::once())
@@ -92,7 +89,6 @@ final class ValidationMiddlewareTest extends TestCase
             $streamFactory,
             $translator,
             $container,
-            $logger,
             $cache,
         );
 
@@ -203,15 +199,12 @@ final class ValidationMiddlewareTest extends TestCase
             ->method('getLocale')
             ->willReturn('nl_NL');
 
-        $logger = $this->createMock(LoggerInterface::class);
-
         $middleware = new ValidationMiddleware(
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
             $translator,
             $container,
-            $logger,
             $cache,
         );
 
@@ -260,15 +253,12 @@ final class ValidationMiddlewareTest extends TestCase
 
         $translator = $this->createMock(TranslatorInterface::class);
 
-        $logger = $this->createMock(LoggerInterface::class);
-
         $middleware = new ValidationMiddleware(
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
             $translator,
             $container,
-            $logger,
             $cache,
         );
 
@@ -359,15 +349,12 @@ final class ValidationMiddlewareTest extends TestCase
 
         $translator = $this->createMock(TranslatorInterface::class);
 
-        $logger = $this->createMock(LoggerInterface::class);
-
         $middleware = new ValidationMiddleware(
             $routeInputDocumentor,
             $responseFactory,
             $streamFactory,
             $translator,
             $container,
-            $logger,
             $cache,
         );
 
