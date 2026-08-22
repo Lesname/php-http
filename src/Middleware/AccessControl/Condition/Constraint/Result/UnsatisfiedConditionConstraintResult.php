@@ -17,6 +17,8 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
      * @param array<string, string | int | float> $context
      *
      * @internal
+     *
+     * @psalm-pure
      */
     public function __construct(
         public readonly string $code,
@@ -28,6 +30,8 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
 
     /**
      * @param array<string, string | int | float> $context
+     *
+     * @psalm-pure
      */
     public static function conflict(string $code, array $context = []): UnsatisfiedConditionConstraintResult
     {
@@ -36,12 +40,17 @@ final class UnsatisfiedConditionConstraintResult implements ConditionConstraintR
 
     /**
      * @param array<string, string | int | float> $context
+     *
+     * @psalm-pure
      */
     public static function constraint(string $code, array $context = []): UnsatisfiedConditionConstraintResult
     {
         return new self($code, $context, ResultCategory::Constraint);
     }
 
+    /**
+     * @psalm-pure
+     */
     #[Override]
     public function isSatisfied(): bool
     {

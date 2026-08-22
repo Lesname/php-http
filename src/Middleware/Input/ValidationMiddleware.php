@@ -8,7 +8,6 @@ use Override;
 use JsonException;
 use NumberFormatter;
 use LesValidator\Validator;
-use Psr\Log\LoggerInterface;
 use LesHttp\Router\Route\Route;
 use LesValidator\ValidateResult;
 use Psr\SimpleCache\CacheInterface;
@@ -31,13 +30,15 @@ use LesValidator\Builder\TypeDocumentValidatorBuilder;
 
 final class ValidationMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly RouteInputDocumentor $routeInputDocumentor,
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly TranslatorInterface $translator,
         private readonly ContainerInterface $container,
-        private readonly LoggerInterface $logger,
         private readonly CacheInterface $cache,
     ) {
     }
@@ -45,8 +46,10 @@ final class ValidationMiddleware implements MiddlewareInterface
     /**
      * @throws ContainerExceptionInterface
      * @throws InvalidArgumentException
-     * @throws NotFoundExceptionInterface
      * @throws JsonException
+     * @throws NoRouteSet
+     * @throws NotFoundExceptionInterface
+     * @throws OptionNotSet
      */
     #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -133,10 +136,6 @@ final class ValidationMiddleware implements MiddlewareInterface
 
             $code = "validation.{$result->code}";
             $message = $this->translator->trans($code, $context, locale: $locale);
-
-            if ($message === $code) {
-                $this->logger->info("Missing translation for '{$message}' with locale '{$locale}'");
-            }
 
             return [
                 'context' => $result->context,

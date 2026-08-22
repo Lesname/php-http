@@ -15,6 +15,8 @@ final class MiddlewarePipeline implements RequestHandlerInterface
 {
     /**
      * @param array<MiddlewareInterface> $handlers
+     *
+     * @psalm-mutation-free
      */
     public function __construct(private readonly array $handlers)
     {}

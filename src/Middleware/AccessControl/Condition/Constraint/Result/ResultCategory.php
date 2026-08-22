@@ -10,6 +10,9 @@ enum ResultCategory
     case Conflict;
     case Constraint;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function getHttpCode(): int
     {
         return match ($this) {

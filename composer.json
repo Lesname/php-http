@@ -5,22 +5,27 @@
     "php": "^8.5.0",
     "ext-ctype": "*",
 
-    "lesname/validator": "^0.6.0",
-    "lesname/cache": "^0.4.0",
-    "lesname/database": "^0.5.0",
-
+    "psr/container": "^2.0.0",
+    "psr/simple-cache": "^3.0.0",
     "psr/http-server-middleware": "^1.0.0",
     "psr/http-factory": "^1.0.0",
+    "psr/log": "^3.0.0",
 
-    "symfony/translation": "^8.0.0"
+    "symfony/translation-contracts": "^3.0.0"
   },
   "require-dev": {
     "ext-intl": "*",
 
     "lesname/token": "^0.4.0",
+    "lesname/documentor": "^0.7.2",
+    "lesname/validator": "^0.6.0",
+
+    "doctrine/dbal": "^4.0.0",
 
     "squizlabs/php_codesniffer": "^4.0.0",
     "phpunit/phpunit": "^13.0.0",
+
+    "vimeo/psalm": "^7.0.0-beta19",
 
     "phpstan/phpstan": "^2.0.0",
     "phpstan/extension-installer": "^1.4.0",

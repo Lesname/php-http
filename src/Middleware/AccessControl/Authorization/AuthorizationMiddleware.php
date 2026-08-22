@@ -26,6 +26,9 @@ use LesHttp\Middleware\AccessControl\Authorization\Constraint\Chain\Authorizatio
 
 final class AuthorizationMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,

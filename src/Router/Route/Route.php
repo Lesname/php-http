@@ -13,13 +13,20 @@ interface Route
 {
     /**
      * @throws OptionNotSet
+     *
+     * @psalm-mutation-free
      */
     public function getOption(string $key): mixed;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function hasOption(string $key): bool;
 
     /**
      * @return array<mixed>
+     *
+     * @psalm-mutation-free
      */
     public function toArray(): array;
 }

@@ -277,7 +277,8 @@ final class ThrottleMiddlewareTest extends TestCase
 
         $insertQueryBuilder
             ->expects(self::exactly(5))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
             ->expects(self::once())
@@ -484,7 +485,8 @@ final class ThrottleMiddlewareTest extends TestCase
 
         $insertQueryBuilder
             ->expects(self::exactly(5))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($insertQueryBuilder);
 
         $insertQueryBuilder
             ->expects(self::once())

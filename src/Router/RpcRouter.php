@@ -10,14 +10,24 @@ use LesHttp\Router\Route\ArrayRoute;
 use Psr\Http\Message\RequestInterface;
 use LesDocumentor\Route\Document\Property\Method;
 
+/**
+ * @todo drop need for post mapping
+ *
+ * @psalm-mutable
+ */
 final class RpcRouter implements Router
 {
     /**
      * @param array<string, array<mixed>> $routes
+     *
+     * @psalm-mutation-free
      */
     public function __construct(private readonly array $routes)
     {}
 
+    /**
+     * @psalm-impure
+     */
     #[Override]
     public function match(RequestInterface $request): ?Route
     {

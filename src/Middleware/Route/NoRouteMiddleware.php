@@ -15,6 +15,9 @@ use Psr\Http\Message\ResponseFactoryInterface;
 
 final class NoRouteMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,
         private readonly StreamFactoryInterface $streamFactory,

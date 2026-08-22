@@ -8,7 +8,6 @@ use Override;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use JsonException;
-use LesDatabase\Query\Builder\Applier\Values\InsertValuesApplier;
 use LesValueObject\Composite\ForeignReference;
 use LesValueObject\Number\Exception\MaxOutBounds;
 use LesValueObject\Number\Exception\MinOutBounds;
@@ -21,6 +20,9 @@ use Throwable;
 
 final class AnalyticsMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(
         private readonly Connection $connection,
         private readonly string $service,
@@ -85,29 +87,28 @@ final class AnalyticsMiddleware implements MiddlewareInterface
             }
         }
 
-        $now = $this->now ?? MilliTimestamp::now();
+        $now = $this->now ?? new MilliTimestamp((int)floor(microtime(true) * 1_000.0));
 
-        $builder = InsertValuesApplier
-            ::forValues(
-                [
-                    'service' => $this->service,
-                    'action' => $this->getAction($request),
-
-                    'identity' => $this->getIdentityFromRequest($request),
-
-                    'ip' => $this->getIpFromRequest($request),
-                    'user_agent' => $this->getUserAgentFromRequest($request),
-
-                    'requested_on' => $startTime,
-                    'duration' => $now->value - $startTime,
-
-                    'response' => $response,
-                    'error' => $error,
-                ]
-            )
-            ->apply($this->connection->createQueryBuilder());
-
+        $builder = $this->connection->createQueryBuilder();
         $builder
+            ->setValue('service', ':service')
+            ->setParameter('service', $this->service)
+            ->setValue('action', ':action')
+            ->setParameter('action', $this->getAction($request))
+            ->setValue('identity', ':identity')
+            ->setParameter('identity', $this->getIdentityFromRequest($request))
+            ->setValue('ip', ':ip')
+            ->setParameter('ip', $this->getIpFromRequest($request))
+            ->setValue('user_agent', ':user_agent')
+            ->setParameter('user_agent', $this->getUserAgentFromRequest($request))
+            ->setValue('requested_on', ':requested_on')
+            ->setParameter('requested_on', $startTime)
+            ->setValue('duration', ':duration')
+            ->setParameter('duration', $now->value - $startTime)
+            ->setValue('response', ':response')
+            ->setParameter('response', $response)
+            ->setValue('error', ':error')
+            ->setParameter('error', $error)
             ->insert('request')
             ->executeStatement();
     }
@@ -154,6 +155,6 @@ final class AnalyticsMiddleware implements MiddlewareInterface
         $startTime = $request->getServerParams()['REQUEST_TIME_FLOAT'];
         assert(is_float($startTime));
 
-        return (int)floor($startTime * 1000);
+        return (int)floor($startTime * 1000.0);
     }
 }

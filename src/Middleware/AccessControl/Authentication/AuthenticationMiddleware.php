@@ -16,6 +16,8 @@ final class AuthenticationMiddleware implements MiddlewareInterface
 {
     /**
      * @param array<AuthenticationAdapter> $adapters
+     *
+     * @psalm-mutation-free
      */
     public function __construct(private readonly array $adapters)
     {}

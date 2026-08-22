@@ -21,6 +21,9 @@ final class BearerAuthenticationAdapter implements AuthenticationAdapter
 /^Bearer (.+)$/
 REGEXP;
 
+    /**
+     * @psalm-mutation-free
+     */
     public function __construct(private readonly TokenCodec $codec)
     {}
 

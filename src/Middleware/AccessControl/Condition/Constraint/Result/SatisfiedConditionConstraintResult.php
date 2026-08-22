@@ -11,18 +11,27 @@ use Override;
  */
 final class SatisfiedConditionConstraintResult implements ConditionConstraintResult
 {
+    /**
+     * @psalm-pure
+     */
     #[Override]
     public function isSatisfied(): bool
     {
         return true;
     }
 
+    /**
+     * @psalm-pure
+     */
     #[Override]
     public function getCategory(): ResultCategory
     {
         return ResultCategory::Ok;
     }
 
+    /**
+     * @psalm-pure
+     */
     #[Override]
     public function jsonSerialize(): mixed
     {

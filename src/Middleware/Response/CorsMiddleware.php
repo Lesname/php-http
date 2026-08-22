@@ -16,6 +16,8 @@ final class CorsMiddleware implements MiddlewareInterface
     /**
      * @param array<array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int}> $pathSettings
      * @param array{origins?: array<string>, origin?: string, methods: array<string>, headers: array<string>, maxAge?: int} $defaultSettings
+     *
+     * @psalm-mutation-free
      */
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory,

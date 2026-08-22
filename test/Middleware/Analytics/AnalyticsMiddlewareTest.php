@@ -82,7 +82,8 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $builder
             ->expects(self::exactly(9))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
@@ -173,7 +174,8 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $builder
             ->expects(self::exactly(9))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
@@ -278,7 +280,8 @@ final class AnalyticsMiddlewareTest extends TestCase
         $builder = $this->createMock(QueryBuilder::class);
         $builder
             ->expects(self::exactly(9))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))
@@ -388,7 +391,8 @@ final class AnalyticsMiddlewareTest extends TestCase
 
         $builder
             ->expects(self::exactly(9))
-            ->method('createNamedParameter');
+            ->method('setParameter')
+            ->willReturn($builder);
 
         $builder
             ->expects(self::exactly(9))

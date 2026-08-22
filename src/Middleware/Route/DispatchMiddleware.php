@@ -16,6 +16,9 @@ use LesHttp\Middleware\Exception\NoRouteSet;
 
 final class DispatchMiddleware implements MiddlewareInterface
 {
+    /**
+     * @psalm-pure
+     */
     public function __construct(private readonly ContainerInterface $container)
     {}
 
