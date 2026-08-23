@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace LesHttp\Middleware\Route;
 
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 
-/**
- * @psalm-immutable
- */
 final class DispatchMiddlewareFactory
 {
-    /**
-     * @psalm-pure
-     */
     public function __invoke(ContainerInterface $container): DispatchMiddleware
     {
-        return new DispatchMiddleware($container);
+        $responseFactory = $container->get(ResponseFactoryInterface::class);
+        assert($responseFactory instanceof ResponseFactoryInterface);
+
+        $streamFactory = $container->get('streamFactory');
+        assert($streamFactory instanceof StreamFactoryInterface);
+
+        return new DispatchMiddleware(
+            $responseFactory,
+            $streamFactory,
+            $container,
+        );
     }
 }

@@ -9,6 +9,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use LesHttp\Middleware\Route\DispatchMiddleware;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -16,7 +18,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(DispatchMiddleware::class)]
 class DispatchMiddlewareTest extends TestCase
 {
-    public function testDispatch(): void
+    public function testDispatchRequestHandler(): void
     {
         $response = $this->createMock(ResponseInterface::class);
 
@@ -31,6 +33,15 @@ class DispatchMiddlewareTest extends TestCase
             ->willReturn($response);
 
         $route = $this->createMock(Route::class);
+        $route
+            ->expects(self::exactly(2))
+            ->method('hasOption')
+            ->willReturnMap(
+                [
+                    ['handler', false],
+                    ['middleware', true],
+                ],
+            );
         $route
             ->method('getOption')
             ->with('middleware')
@@ -51,7 +62,11 @@ class DispatchMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())->method('handle');
 
-        $middleware = new DispatchMiddleware($container);
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
+        $middleware = new DispatchMiddleware($responseFactory, $streamFactory, $container);
         self::assertSame($response, $middleware->process($request, $handler));
     }
 }
