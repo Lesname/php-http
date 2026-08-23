@@ -6,6 +6,7 @@ namespace LesHttpTest\Middleware\Route;
 
 use LesHttp\Router\Route\Route;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,6 +15,8 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use LesHttp\Middleware\Route\DispatchMiddleware;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use LesHttp\Middleware\Route\Handler\RouteHandler;
+use LesHttp\Middleware\Route\Handler\Response\HandleResponse;
 
 #[CoversClass(DispatchMiddleware::class)]
 class DispatchMiddlewareTest extends TestCase
@@ -24,9 +27,9 @@ class DispatchMiddlewareTest extends TestCase
 
         $request = $this->createMock(ServerRequestInterface::class);
 
-        $dispatcher = $this->createMock(RequestHandlerInterface::class);
+        $requestHandler = $this->createMock(RequestHandlerInterface::class);
 
-        $dispatcher
+        $requestHandler
             ->expects(self::once())
             ->method('handle')
             ->with($request)
@@ -45,7 +48,7 @@ class DispatchMiddlewareTest extends TestCase
         $route
             ->method('getOption')
             ->with('middleware')
-            ->willReturn($dispatcher::class);
+            ->willReturn($requestHandler::class);
 
         $request
             ->method('getAttribute')
@@ -56,8 +59,8 @@ class DispatchMiddlewareTest extends TestCase
         $container
             ->expects(self::once())
             ->method('get')
-            ->with($dispatcher::class)
-            ->willReturn($dispatcher);
+            ->with($requestHandler::class)
+            ->willReturn($requestHandler);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::never())->method('handle');
@@ -65,6 +68,81 @@ class DispatchMiddlewareTest extends TestCase
         $responseFactory = $this->createMock(ResponseFactoryInterface::class);
 
         $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
+        $middleware = new DispatchMiddleware($responseFactory, $streamFactory, $container);
+        self::assertSame($response, $middleware->process($request, $handler));
+    }
+
+    public function testDispatchRouteHandler(): void
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $route = $this->createMock(Route::class);
+
+        $stream = $this->createMock(StreamInterface::class);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->expects(self::once())
+            ->method('withBody')
+            ->with($stream)
+            ->willReturn($response);
+
+        $response
+            ->expects(self::once())
+            ->method('withHeader')
+            ->with('content-type', 'application/json')
+            ->willReturn($response);
+
+        $routeHandler = $this->createMock(RouteHandler::class);
+
+        $handleResponse = new HandleResponse(
+            245,
+            [],
+        );
+
+        $routeHandler
+            ->expects(self::once())
+            ->method('handle')
+            ->with($request, $route)
+            ->willReturn($handleResponse);
+
+        $route
+            ->expects(self::once(2))
+            ->method('hasOption')
+            ->willReturnMap([['handler', true]]);
+        $route
+            ->method('getOption')
+            ->with('handler')
+            ->willReturn($routeHandler::class);
+
+        $request
+            ->method('getAttribute')
+            ->with('route')
+            ->willReturn($route);
+
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::once())
+            ->method('get')
+            ->with($routeHandler::class)
+            ->willReturn($routeHandler);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
+
+        $responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $responseFactory
+            ->expects(self::once())
+            ->method('createResponse')
+            ->with(245, '')
+            ->willReturn($response);
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory
+            ->expects(self::once())
+            ->method('createStream')
+            ->with('[]')
+            ->willReturn($stream);
 
         $middleware = new DispatchMiddleware($responseFactory, $streamFactory, $container);
         self::assertSame($response, $middleware->process($request, $handler));
