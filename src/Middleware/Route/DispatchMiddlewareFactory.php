@@ -8,14 +8,8 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 
-/**
- * @psalm-immutable
- */
 final class DispatchMiddlewareFactory
 {
-    /**
-     * @psalm-pure
-     */
     public function __invoke(ContainerInterface $container): DispatchMiddleware
     {
         $responseFactory = $container->get(ResponseFactoryInterface::class);

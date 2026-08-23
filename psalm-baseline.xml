@@ -22,8 +22,15 @@
   </file>
   <file src="src/Middleware/Route/DispatchMiddleware.php">
     <MixedAssignment>
-      <code><![CDATA[$middleware]]></code>
+      <code><![CDATA[$handler]]></code>
+      <code><![CDATA[$option]]></code>
     </MixedAssignment>
+  </file>
+  <file src="src/Middleware/Route/Exception/NoHandler.php">
+    <ImpureMethodCall>
+      <code><![CDATA[$this->request->getUri()]]></code>
+      <code><![CDATA[$this->request->getUri()->getPath()]]></code>
+    </ImpureMethodCall>
   </file>
   <file src="src/Router/RpcRouterFactory.php">
     <MixedArgumentTypeCoercion>
