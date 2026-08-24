@@ -15,7 +15,7 @@ final class DispatchMiddlewareFactory
         $responseFactory = $container->get(ResponseFactoryInterface::class);
         assert($responseFactory instanceof ResponseFactoryInterface);
 
-        $streamFactory = $container->get('streamFactory');
+        $streamFactory = $container->get(StreamFactoryInterface::class);
         assert($streamFactory instanceof StreamFactoryInterface);
 
         return new DispatchMiddleware(
