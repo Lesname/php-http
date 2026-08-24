@@ -32,6 +32,41 @@
       <code><![CDATA[$this->request->getUri()->getPath()]]></code>
     </ImpureMethodCall>
   </file>
+  <file src="src/Middleware/Route/Handler/Response/AbstractHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
+  <file src="src/Middleware/Route/Handler/Response/ClientErrorHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
+  <file src="src/Middleware/Route/Handler/Response/CreatedHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
+  <file src="src/Middleware/Route/Handler/Response/EmptyHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
+  <file src="src/Middleware/Route/Handler/Response/ServerErrorHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
+  <file src="src/Middleware/Route/Handler/Response/SuccessHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
   <file src="src/Router/RpcRouterFactory.php">
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$config['routes']]]></code>

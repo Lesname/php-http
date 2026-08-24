@@ -95,10 +95,11 @@ class DispatchMiddlewareTest extends TestCase
 
         $routeHandler = $this->createMock(RouteHandler::class);
 
-        $handleResponse = new HandleResponse(
-            245,
-            [],
-        );
+        $handleResponse = new class implements HandleResponse {
+            public int $code = 245;
+            public mixed $body = [];
+            public array $headers = [];
+        };
 
         $routeHandler
             ->expects(self::once())
