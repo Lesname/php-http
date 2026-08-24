@@ -49,6 +49,12 @@
       <code><![CDATA[Override]]></code>
     </InvalidAttribute>
   </file>
+  <file src="src/Middleware/Route/Handler/Response/DynamicErrorHandleResponse.php">
+    <InvalidAttribute>
+      <code><![CDATA[Override]]></code>
+      <code><![CDATA[Override]]></code>
+    </InvalidAttribute>
+  </file>
   <file src="src/Middleware/Route/Handler/Response/EmptyHandleResponse.php">
     <InvalidAttribute>
       <code><![CDATA[Override]]></code>
